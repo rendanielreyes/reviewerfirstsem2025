@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Midterm Interactive Quiz Reviewer - 1st Mass</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0e0e10;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .quiz-container {
+      background: #1e1e22;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      max-width: 700px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #00c6ff;
+    }
+    .question {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    .options button {
+      display: block;
+      background: #2c2c33;
+      color: #f0f0f0;
+      border: none;
+      border-radius: 8px;
+      margin: 6px 0;
+      padding: 10px;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options button:hover {
+      background: #3d3d44;
+    }
+    .feedback {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .correct { color: #00ff88; }
+    .wrong { color: #ff5555; }
+    .next-btn {
+      margin-top: 15px;
+      background: #00c6ff;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .next-btn:hover {
+      background: #009bd1;
+    }
+    .result {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>CMS Midterm Interactive Quiz</h1>
+    <div id="quiz">
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <button id="next-btn" class="next-btn" style="display:none;">Next</button>
+    </div>
+    <div id="result" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    const quizData = [
+{ q: "When did the first Christian Mass in the Philippines take place?", options: ["March 16, 1521", "March 28, 1521", "March 31, 1521", "April 4, 1521"], answer: 2 },
+{ q: "Where was the first Christian Mass officially recognized to have occurred?", options: ["Butuan", "Limasawa", "Bolinao", "Cebu"], answer: 1 },
+{ q: "Who officiated the first Mass in the Philippines?", options: ["Fr. Vicente Balaguer", "Fr. Pedro de Valderrama", "Fr. Pablo Pastells", "Fr. Garcia"], answer: 1 },
+{ q: "Who chronicled the details of the first Mass?", options: ["Antonio Pigafetta", "Jose Rizal", "Miguel Lopez de Legazpi", "Nick Joaquin"], answer: 0 },
+{ q: "Who were the native rulers present at the first Mass?", options: ["Rajah Humabon and Lapulapu", "Rajah Siagu and Rajah Colambu", "Rajah Sulayman and Lakandula", "Rajah Tupas and Rajah Colambu"], answer: 1 },
+{ q: "What event did the first Christian Mass coincide with?", options: ["Good Friday", "Easter Sunday", "Christmas Day", "Palm Sunday"], answer: 1 },
+{ q: "Which Italian historian translated Pigafetta’s account in 1800?", options: ["Carlo Amoretti", "Andrea da Mosto", "Trinidad Pardo de Tavera", "Gregorio Zaide"], answer: 0 },
+{ q: "What did Carlo Amoretti’s translation of Pigafetta’s journal cause?", options: ["It strengthened the Butuan claim", "It created translation errors and confusion", "It erased Pigafetta’s records", "It denied the Mass happened"], answer: 1 },
+{ q: "Who corrected Pigafetta’s journal translation in 1894?", options: ["Nick Joaquin", "Andrea da Mosto", "Antonio de Morga", "Jose Rizal"], answer: 1 },
+{ q: "Which historian first argued that the Mass took place in Limasawa?", options: ["Trinidad Pardo de Tavera", "Fr. Pablo Pastells", "Fr. Collin", "Zeus Salazar"], answer: 0 },
+{ q: "Who supported the Limasawa claim using navigation logs?", options: ["Fr. Pablo Pastells", "Fr. Balaguer", "Fr. Garcia", "Fr. Albo"], answer: 0 },
+{ q: "Whose logbook gave coordinates matching Limasawa?", options: ["Francisco Albo", "Antonio Pigafetta", "Miguel de Loarca", "Jose Rizal"], answer: 0 },
+{ q: "What latitude did Albo record for 'Mazava'?", options: ["11°", "9°", "7°", "13°"], answer: 1 },
+{ q: "Which two native rulers attended the Mass?", options: ["Siagu and Colambu", "Humabon and Lapulapu", "Tupas and Sulayman", "Rajah Matanda and Rajah Colambu"], answer: 0 },
+{ q: "What was the main argument supporting Butuan’s claim?", options: ["The name 'Mazaua' sounds like 'Masao'", "Pigafetta mentioned Agusan River", "It was closer to Cebu", "Butuan was Magellan’s last stop"], answer: 0 },
+{ q: "Which historian supported Butuan’s claim?", options: ["Gregorio Zaide", "Teodoro Agoncillo", "Ambeth Ocampo", "Renato Constantino"], answer: 0 },
+{ q: "When did the Gancayco Panel affirm Limasawa as the site?", options: ["1980", "1998", "2009", "2020"], answer: 1 },
+{ q: "Which panel reaffirmed Limasawa as the site in 2020?", options: ["Mojares Panel", "Gancayco Panel", "Legarda Panel", "Lopez Panel"], answer: 0 },
+{ q: "What term refers to Pigafetta’s omission of Agusan River in his account?", options: ["Argument from Omission", "Argument from Distance", "Argument from Geography", "Argument from Faith"], answer: 0 },
+{ q: "How long did Magellan’s crew stay in Limasawa according to records?", options: ["3 days", "5 days", "7 days", "10 days"], answer: 2 },
+{ q: "What year did Jesuit Fr. Pablo Pastells support Limasawa’s claim?", options: ["1890", "1895", "1901", "1921"], answer: 1 },
+{ q: "When was the 400th anniversary of the First Mass celebrated?", options: ["1921", "1935", "1965", "1998"], answer: 0 },
+{ q: "Which province currently commemorates the First Mass with a shrine?", options: ["Leyte", "Cebu", "Butuan", "Bohol"], answer: 0 },
+{ q: "What other location claims an earlier Mass in 1324?", options: ["Bolinao, Pangasinan", "Cebu City", "Manila Bay", "Davao"], answer: 0 },
+{ q: "What is the significance of identifying the true site of the First Mass?", options: ["It clarifies Philippine historical interpretation", "It changes the country’s religion", "It ends colonization", "It cancels Magellan’s voyage"], answer: 0 }
+];
+
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const feedbackEl = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const resultEl = document.getElementById('result');
+
+    function showQuestion() {
+      const item = quizData[currentQuestion];
+      questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+      optionsEl.innerHTML = '';
+      feedbackEl.textContent = '';
+      nextBtn.style.display = 'none';
+
+      item.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const correct = quizData[currentQuestion].answer;
+      if (selected === correct) {
+        feedbackEl.textContent = '✅ Correct!';
+        feedbackEl.className = 'feedback correct';
+        score++;
+      } else {
+        feedbackEl.textContent = `❌ Wrong! Correct answer: ${quizData[currentQuestion].options[correct]}`;
+        feedbackEl.className = 'feedback wrong';
+      }
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = 'inline-block';
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    };
+
+    function showResult() {
+      document.getElementById('quiz').style.display = 'none';
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = `<h2>Your Score: ${score}/${quizData.length}</h2><button class='next-btn' onclick='restartQuiz()'>Retry Quiz</button>`;
+    }
+
+    function restartQuiz() {
+      score = 0;
+      currentQuestion = 0;
+      document.getElementById('quiz').style.display = 'block';
+      resultEl.style.display = 'none';
+      showQuestion();
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
