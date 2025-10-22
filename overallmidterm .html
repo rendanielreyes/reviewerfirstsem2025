@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CMS Midterm Interactive Quiz Reviewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0e0e10;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .quiz-container {
+      background: #1e1e22;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      max-width: 700px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #00c6ff;
+    }
+    .question {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    .options button {
+      display: block;
+      background: #2c2c33;
+      color: #f0f0f0;
+      border: none;
+      border-radius: 8px;
+      margin: 6px 0;
+      padding: 10px;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options button:hover {
+      background: #3d3d44;
+    }
+    .feedback {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .correct { color: #00ff88; }
+    .wrong { color: #ff5555; }
+    .next-btn {
+      margin-top: 15px;
+      background: #00c6ff;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .next-btn:hover {
+      background: #009bd1;
+    }
+    .result {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>CMS Midterm Interactive Quiz</h1>
+    <div id="quiz">
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <button id="next-btn" class="next-btn" style="display:none;">Next</button>
+    </div>
+    <div id="result" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    const quizData = [
+{ q: "What is the main goal of historians in studying history?", options: ["To preserve myths", "To predict the future", "To understand the present through the past", "To collect ancient artifacts"], answer: 2 },
+{ q: "What does the Filipino concept 'Kasaysayan' literally mean?", options: ["Story with reason", "Story with meaning", "Story without bias", "Story of the colonizers"], answer: 1 },
+{ q: "What is historiography?", options: ["The study of ancient languages", "The study of how history is written", "The writing of fictional stories", "The analysis of fossils"], answer: 1 },
+{ q: "According to Zeus Salazar, what is Pantayong Pananaw?", options: ["History told from foreign perspectives", "History written from a Filipino point of view", "History written in English", "The study of Spanish archives"], answer: 1 },
+{ q: "Why is studying history important?", options: ["It helps us forget past mistakes", "It helps us know our ancestors’ wealth", "It helps us understand our identity and society", "It is a requirement in school"], answer: 2 },
+{ q: "Which of the following is a primary source?", options: ["History textbook", "Scholar’s analysis", "Jose Rizal’s original letter", "Historical documentary"], answer: 2 },
+{ q: "Which dating method uses tree rings to determine the age of an object?", options: ["Carbon-14 dating", "Dendrochronology", "Potassium-Argon dating", "Uranium Series dating"], answer: 1 },
+{ q: "What is external criticism used for?", options: ["To analyze the author’s intent", "To verify authenticity", "To interpret meaning", "To find grammatical errors"], answer: 1 },
+{ q: "What is the purpose of internal criticism?", options: ["To evaluate the physical condition of a document", "To check reliability and bias", "To identify the paper’s age", "To repair old manuscripts"], answer: 1 },
+{ q: "The Tabon Man skullcap was discovered in:", options: ["Palawan", "Cagayan", "Kalinga", "Laguna"], answer: 0 },
+{ q: "During the Spanish period, how did colonizers portray pre-colonial Filipinos?", options: ["Civilized and artistic", "Barbaric and uncultured", "Equal to Europeans", "Technologically advanced"], answer: 1 },
+{ q: "What was the main purpose of American colonial writings?", options: ["To glorify Filipino culture", "To promote independence", "To justify colonization", "To preserve local traditions"], answer: 2 },
+{ q: "Who annotated Antonio de Morga’s book to prove pre-colonial advancement?", options: ["Emilio Jacinto", "Jose Rizal", "Teodoro Agoncillo", "Zeus Salazar"], answer: 1 },
+{ q: "Who popularized the concept of 'Pantayong Pananaw'?", options: ["Renato Constantino", "Teodoro Agoncillo", "Zeus Salazar", "Samuel Tan"], answer: 2 },
+{ q: "Who emphasized the 'people’s history' approach?", options: ["Jose Rizal", "Renato Constantino", "Gregorio Zaide", "Nick Joaquin"], answer: 1 },
+{ q: "When did the Cavite Mutiny occur?", options: ["January 20, 1872", "February 17, 1872", "January 7, 1871", "March 31, 1872"], answer: 0 },
+{ q: "Who led the Cavite Mutiny?", options: ["Mariano Gomez", "Sarhento Fernando La Madrid", "Padre Burgos", "Emilio Aguinaldo"], answer: 1 },
+{ q: "What was one cause of the mutiny according to Filipinos?", options: ["The spread of Protestantism", "Removal of workers’ privileges", "Invasion by foreign powers", "Religious differences"], answer: 1 },
+{ q: "How did the Spanish government describe the mutiny?", options: ["A peaceful protest", "A conspiracy to start a revolution", "A misunderstanding", "An act of vandalism"], answer: 1 },
+{ q: "Who were the three priests executed after the mutiny?", options: ["Gomez, Burgos, and Zamora", "Rizal, Bonifacio, and Mabini", "Inocencio, Reyes, and Paraiso", "Burgos, Del Pilar, and Lopez"], answer: 0 },
+{ q: "What method was used to execute GOMBURZA?", options: ["Firing squad", "Hanging", "Garrote", "Beheading"], answer: 2 },
+{ q: "What did Rizal dedicate El Filibusterismo to?", options: ["His parents", "The Filipino youth", "GOMBURZA", "Bonifacio"], answer: 2 },
+{ q: "Who wrote the Kartilya ng Katipunan?", options: ["Andres Bonifacio", "Emilio Jacinto", "Apolinario Mabini", "Mariano Gomez"], answer: 1 },
+{ q: "What was Emilio Jacinto’s pseudonym?", options: ["Dimasilaw", "Dimasalang", "Dimas-ilaw", "Makamandag"], answer: 0 },
+{ q: "What was the purpose of the Kartilya?", options: ["A war strategy", "A moral and nationalistic guide", "A revolutionary diary", "A military code"], answer: 1 },
+{ q: "What does the Kartilya teach about equality?", options: ["Only the rich deserve respect", "Everyone is equal regardless of wealth or race", "Men are above women", "Power defines virtue"], answer: 1 },
+{ q: "What is the 'Golden Rule' stated in the Kartilya?", options: ["Always follow your leader", "Never reveal secrets", "Do not do to others what you don’t want done to your family", "Respect authority at all times"], answer: 2 },
+{ q: "According to the Kartilya, what is the measure of true honor?", options: ["Education and power", "Wealth and beauty", "Good character and love of country", "Obedience to foreign rulers"], answer: 2 },
+{ q: "When did the first Christian mass take place?", options: ["April 4, 1521", "March 31, 1521", "March 28, 1521", "March 16, 1521"], answer: 1 },
+{ q: "Where was the first mass officially recognized to have occurred?", options: ["Butuan", "Limasawa", "Pangasinan", "Cebu"], answer: 1 },
+{ q: "Who officiated the first mass?", options: ["Fr. Pedro de Valderrama", "Fr. Vicente Balaguer", "Fr. Pablo Pastells", "Rajah Colambu"], answer: 0 },
+{ q: "Who were the native rulers present at the mass?", options: ["Rajah Siagu and Rajah Colambu", "Rajah Humabon and Lapulapu", "Rajah Sulayman and Lakandula", "Rajah Colambu and Pigafetta"], answer: 0 },
+{ q: "What source first described the mass?", options: ["Rizal’s diary", "Pigafetta’s journal", "American reports", "Jesuit letters"], answer: 1 },
+{ q: "In what year did the NHCP reaffirm that the first mass was held in Limasawa?", options: ["1998", "2009", "2020", "1921"], answer: 2 },
+{ q: "Which Jesuit historian supported Limasawa’s claim using logs and maps?", options: ["Fr. Pablo Pastells", "Fr. Balaguer", "Fr. Garcia", "Fr. Collin"], answer: 0 },
+{ q: "When was Jose Rizal born?", options: ["June 19, 1861", "December 30, 1861", "June 12, 1898", "July 4, 1896"], answer: 0 },
+{ q: "Where was Rizal executed?", options: ["Cavite", "Dapitan", "Luneta/Babagumbayan", "Intramuros"], answer: 2 },
+{ q: "What was the central controversy regarding Rizal’s death?", options: ["His missing remains", "Whether he retracted or not", "His political alliance", "His family’s involvement"], answer: 1 },
+{ q: "Who claimed to have witnessed Rizal’s retraction?", options: ["Fr. Vicente Balaguer", "Fr. Federico Moreno", "Fr. Pablo Pastells", "Fr. Gregorio Zaide"], answer: 0 },
+{ q: "Where was the alleged original retraction document found in 1935?", options: ["In the National Library", "In the 'Masoneria' folder", "In Rizal’s home", "In the Spanish Embassy"], answer: 1 },
+{ q: "Who were among those who denied the authenticity of the retraction?", options: ["Nick Joaquin and Ambeth Ocampo", "Frank Laubach and Rafael Palma", "Jose Diokno and Augusto De Viana", "Teodoro Agoncillo and Zeus Salazar"], answer: 1 },
+{ q: "Which group believed the retraction was genuine?", options: ["Masons", "Jesuits and Catholic leaders", "Anti-colonial groups", "Revolutionary soldiers"], answer: 1 },
+{ q: "According to Fr. Balaguer, what did Rizal do before execution?", options: ["Denied his faith", "Married Josephine Bracken", "Fled to Hong Kong", "Burned his writings"], answer: 1 },
+{ q: "What was the evidence that Rizal died as a Catholic?", options: ["He was buried in Paco Cemetery", "His will was written in Latin", "He quoted the Bible", "His poem had no religious symbols"], answer: 0 },
+{ q: "In which poem did Rizal mention the cross before his death?", options: ["A La Patria", "Mi Ultimo Adios", "El Amor Patrio", "Sa Aking Mga Kabata"], answer: 1 },
+{ q: "Who said the retraction was a 'plain unadorned fact of history'?", options: ["Nicolas Zafra", "Jose Diokno", "Gregorio Zaide", "Augusto De Viana"], answer: 0 },
+{ q: "What did Dr. Augusto De Viana believe about the retraction?", options: ["It was fabricated", "Rizal retracted only from Masonry", "Rizal retracted all his beliefs", "It was signed by friars"], answer: 1 },
+{ q: "Who reminded people that Rizal’s faith does not lessen his heroism?", options: ["Jose Diokno", "Andres Bonifacio", "Nick Joaquin", "Ambeth Ocampo"], answer: 0 },
+{ q: "What does the retraction issue primarily teach historians?", options: ["To ignore religion", "To analyze multiple sources", "To trust colonial reports", "To focus only on one version"], answer: 1 },
+{ q: "Regardless of Rizal’s retraction, what remains true?", options: ["He betrayed the revolution", "He was a hero willing to die for his country", "He refused to help others", "He denied his nation"], answer: 1 },
+{ q: "What is the main function of the National Archives of the Philippines?", options: ["To publish new textbooks", "To collect and preserve historical documents", "To store religious artifacts", "To house government officials"], answer: 1 },
+{ q: "The National Library of the Philippines was originally founded as:", options: ["Museo-Biblioteca de Filipinas", "Archivo General de Filipinas", "Instituto Nacional de Historia", "Biblioteca Nacional de Rizal"], answer: 0 },
+{ q: "What valuable collection does the National Library hold that includes the Lupang Hinirang manuscript?", options: ["Rizaliana Collection", "Bonifacio Files", "Katipunan Codex", "Revolutionary Archive"], answer: 0 },
+{ q: "Which artifact discovered in 1964 symbolizes early Filipino burial traditions?", options: ["Tabon Skullcap", "Manunggul Jar", "Rhinoceros Fossils", "Callao Man Toe Bone"], answer: 1 },
+{ q: "What does the presence of foreign archives about the Philippines show?", options: ["Lack of Filipino historians", "The global interest in Philippine history", "The destruction of local sources", "Colonizers’ monopoly on history"], answer: 1 },
+{ q: "Which of the following is not an example of internal criticism?", options: ["Checking if the author witnessed the event", "Comparing handwriting styles", "Identifying possible bias", "Assessing consistency of details"], answer: 1 },
+{ q: "What did the Cavite Mutiny ultimately inspire among Filipinos?", options: ["Loyalty to Spain", "Nationalist awakening", "Religious conversion", "Support for American rule"], answer: 1 },
+{ q: "Which principle in the Kartilya emphasizes time management?", options: ["One who wastes time loses honor.", "Do not waste time; it will never return.", "Time is gold and should be sold.", "Time belongs to the leaders."], answer: 1 },
+{ q: "What was the outcome of the 2020 Mojares Panel regarding the First Mass?", options: ["It declared Butuan the true site", "It reaffirmed Limasawa as the true site", "It postponed the decision", "It found both sites invalid"], answer: 1 },
+{ q: "What lesson can be learned from the Rizal retraction controversy?", options: ["Historical truth is fixed and unchanging", "Historians must critically assess evidence before forming conclusions", "Religion always determines heroism", "History should rely only on oral tradition"], answer: 1 }
+];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const feedbackEl = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const resultEl = document.getElementById('result');
+
+    function showQuestion() {
+      const item = quizData[currentQuestion];
+      questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+      optionsEl.innerHTML = '';
+      feedbackEl.textContent = '';
+      nextBtn.style.display = 'none';
+
+      item.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const correct = quizData[currentQuestion].answer;
+      if (selected === correct) {
+        feedbackEl.textContent = '✅ Correct!';
+        feedbackEl.className = 'feedback correct';
+        score++;
+      } else {
+        feedbackEl.textContent = `❌ Wrong! Correct answer: ${quizData[currentQuestion].options[correct]}`;
+        feedbackEl.className = 'feedback wrong';
+      }
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = 'inline-block';
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    };
+
+    function showResult() {
+      document.getElementById('quiz').style.display = 'none';
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = `<h2>Your Score: ${score}/${quizData.length}</h2><button class='next-btn' onclick='restartQuiz()'>Retry Quiz</button>`;
+    }
+
+    function restartQuiz() {
+      score = 0;
+      currentQuestion = 0;
+      document.getElementById('quiz').style.display = 'block';
+      resultEl.style.display = 'none';
+      showQuestion();
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
