@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Midterm Quiz — Understanding the Self v1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0e0e10;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .quiz-container {
+      background: #1e1e22;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      max-width: 700px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #00c6ff;
+    }
+    .question {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    .options button {
+      display: block;
+      background: #2c2c33;
+      color: #f0f0f0;
+      border: none;
+      border-radius: 8px;
+      margin: 6px 0;
+      padding: 10px;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options button:hover {
+      background: #3d3d44;
+    }
+    .feedback {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .correct { color: #00ff88; }
+    .wrong { color: #ff5555; }
+    .next-btn {
+      margin-top: 15px;
+      background: #00c6ff;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .next-btn:hover {
+      background: #009bd1;
+    }
+    .result {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Interactive Midterm Quiz</h1>
+    <h1>Understanding the Self - v1</h1>
+    <div id="quiz">
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <button id="next-btn" class="next-btn" style="display:none;">Next</button>
+    </div>
+    <div id="result" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    const quizData = [
+{ q: "Who believed that the self is an immortal soul that exists over time?", options: ["Plato", "Socrates", "Descartes", "Aristotle"], answer: 1 },
+{ q: "Which philosopher said that reason controls spirits and appetites to achieve harmony?", options: ["Plato", "Freud", "Locke", "Nietzsche"], answer: 0 },
+{ q: "Who is known for the statement 'I think, therefore I am'?", options: ["Rene Descartes", "John Locke", "Gilbert Ryle", "Kant"], answer: 0 },
+{ q: "Who described the mind as a 'Tabula Rasa' or blank slate?", options: ["Socrates", "John Locke", "Freud", "Plato"], answer: 1 },
+{ q: "Who described the self as a dynamic system composed of id, ego, and superego?", options: ["Sigmund Freud", "Gilbert Ryle", "Descartes", "Locke"], answer: 0 },
+{ q: "Which part of Freud’s personality structure is based on pleasure?", options: ["Id", "Ego", "Superego", "Conscious"], answer: 0 },
+{ q: "Which part of Freud’s personality structure is based on reality?", options: ["Superego", "Ego", "Id", "Subconscious"], answer: 1 },
+{ q: "Which part of Freud’s personality structure is based on morality?", options: ["Ego", "Superego", "Id", "Instinct"], answer: 1 },
+{ q: "Who said 'I act, therefore I am' emphasizing observable behavior?", options: ["Gilbert Ryle", "Rene Descartes", "Freud", "Plato"], answer: 0 },
+{ q: "What does the Avocado View of the self imply?", options: ["A stable, enduring self at the core", "No stable self at all", "Self changes constantly", "Self defined by society"], answer: 0 },
+{ q: "What does the Artichoke View of the self imply?", options: ["Stable self core", "No enduring stable core", "Self made of reason only", "Self controlled by spirit"], answer: 1 },
+{ q: "Who believed that the self develops over time through social experience?", options: ["George Herbert Mead", "Sigmund Freud", "John Locke", "Socrates"], answer: 0 },
+{ q: "In Mead’s theory, what happens during the Preparatory Stage?", options: ["Children imitate others without understanding meaning", "Children play organized games", "Children take social roles", "Children develop identity"], answer: 0 },
+{ q: "During which stage do children take roles of significant others?", options: ["Game Stage", "Play Stage", "Preparatory Stage", "Mature Stage"], answer: 1 },
+{ q: "During which stage do children learn the values of society as a whole?", options: ["Preparatory Stage", "Game Stage", "Play Stage", "Cultural Stage"], answer: 1 },
+{ q: "In William James’ theory, what is the 'I'?", options: ["Self as an object", "Self that thinks and acts", "Socially defined self", "Moral self"], answer: 1 },
+{ q: "In William James’ theory, what is the 'Me'?", options: ["The thinker and actor", "The self as an object of knowledge", "The unconscious mind", "The ego"], answer: 1 },
+{ q: "How does anthropology define the self?", options: ["As a living extension of culture", "As fixed and unchanging", "As purely biological", "As socially isolated"], answer: 0 },
+{ q: "What belief sees one’s own culture as inferior to others?", options: ["Ethnocentrism", "Xenocentrism", "Assimilation", "Acculturation"], answer: 1 },
+{ q: "What belief sees one’s own culture as superior to others?", options: ["Ethnocentrism", "Xenocentrism", "Cultural relativism", "Assimilation"], answer: 0 },
+{ q: "What process involves embracing a new culture entirely?", options: ["Acculturation", "Assimilation", "Enculturation", "Integration"], answer: 1 },
+{ q: "What process involves embracing a new culture without replacing the old one?", options: ["Assimilation", "Acculturation", "Domination", "Colonization"], answer: 1 },
+{ q: "What philosophy prioritizes individual needs over group goals?", options: ["Collectivism", "Individualism", "Ethnocentrism", "Humanism"], answer: 1 },
+{ q: "Which perspective emphasizes family and group loyalty over personal desires?", options: ["Collectivism", "Individualism", "Capitalism", "Materialism"], answer: 0 },
+{ q: "What does Western thought primarily focus on?", options: ["Community harmony", "The individual self", "Family relationships", "Spiritual detachment"], answer: 1 },
+{ q: "Which Eastern philosophy focuses on harmony and balance with nature?", options: ["Buddhism", "Taoism", "Confucianism", "Hinduism"], answer: 1 },
+{ q: "Which philosophy teaches becoming a noble and virtuous person through relationships?", options: ["Confucianism", "Taoism", "Buddhism", "Western thought"], answer: 0 },
+{ q: "According to Buddhism, how is the self viewed?", options: ["An illusion", "A soul that reincarnates", "A physical entity", "A moral core"], answer: 0 },
+{ q: "What is self-esteem best defined as?", options: ["How much one values oneself", "Knowledge about one’s traits", "Moral reasoning", "Social identity"], answer: 0 },
+{ q: "What is self-concept composed of?", options: ["Only physical traits", "Physical, intellectual, and aesthetic capacities", "Moral beliefs only", "Religious identity"], answer: 1 },
+{ q: "What does the True Self represent according to Winnicott?", options: ["A social mask", "A genuine and authentic self", "A false identity", "A temporary state"], answer: 1 },
+{ q: "What does the False Self represent?", options: ["True identity", "A social mask people wear", "A spiritual core", "A biological need"], answer: 1 },
+{ q: "What does the Real Self represent?", options: ["The original, inner self", "The ideal version of self", "The false persona", "The social mask"], answer: 0 },
+{ q: "What does the Ideal Self represent?", options: ["Who you currently are", "Who you want to become", "Your hidden emotions", "Your childhood self"], answer: 1 },
+{ q: "What does the Sexual Self refer to?", options: ["Your personal understanding of yourself as a sexual being", "Only reproductive health", "Gender roles in society", "Social expectations"], answer: 0 },
+{ q: "Which chromosome combination determines a female?", options: ["XY", "XX", "YY", "XZ"], answer: 1 },
+{ q: "Which chromosome combination determines a male?", options: ["XX", "XY", "YY", "XO"], answer: 1 },
+{ q: "Which are male secondary sex characteristics?", options: ["Breast growth", "Testes growth and voice deepening", "Widening hips", "Menstruation"], answer: 1 },
+{ q: "Which are female secondary sex characteristics?", options: ["Voice deepening", "Facial hair growth", "Breast and uterus development", "Increased muscle mass"], answer: 2 },
+{ q: "Which contraception method means not having sex at all?", options: ["Barrier Methods", "Abstinence", "Hormonal Methods", "IUCD"], answer: 1 },
+{ q: "Which method of contraception uses condoms?", options: ["Hormonal Methods", "Barrier Methods", "Permanent Methods", "Natural Methods"], answer: 1 },
+{ q: "Which contraception method includes pills, injections, and implants?", options: ["Barrier Methods", "Hormonal Methods", "Permanent Methods", "Natural Methods"], answer: 1 },
+{ q: "Which device is placed in the womb to prevent pregnancy?", options: ["IUCD", "Pill", "Implant", "Condom"], answer: 0 },
+{ q: "Which permanent contraception involves blocking the fallopian tubes in women?", options: ["Vasectomy", "Tubectomy", "Implant", "IUCD"], answer: 1 },
+{ q: "Which permanent contraception involves cutting sperm tubes in men?", options: ["Tubectomy", "Vasectomy", "IUCD", "Pill"], answer: 1 },
+{ q: "What are Sexually Transmitted Infections (STIs)?", options: ["Diseases from food", "Sickness spread through sexual contact", "Inherited diseases", "Hormonal disorders"], answer: 1 },
+{ q: "Which STI can cause burning when peeing and discharge from private parts?", options: ["Gonorrhea", "Chlamydia", "AIDS", "Herpes"], answer: 0 },
+{ q: "Which STI causes painful sores or blisters around the genitals or mouth?", options: ["Chlamydia", "Genital Herpes", "AIDS", "Gonorrhea"], answer: 1 },
+{ q: "Which STI causes pain when urinating and unusual discharge, sometimes with no symptoms?", options: ["Gonorrhea", "Chlamydia", "Herpes", "AIDS"], answer: 1 },
+{ q: "Which disease is caused by HIV and weakens the immune system?", options: ["AIDS", "Chlamydia", "Herpes", "Gonorrhea"], answer: 0 },
+];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const feedbackEl = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const resultEl = document.getElementById('result');
+
+    function showQuestion() {
+      const item = quizData[currentQuestion];
+      questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+      optionsEl.innerHTML = '';
+      feedbackEl.textContent = '';
+      nextBtn.style.display = 'none';
+
+      item.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const correct = quizData[currentQuestion].answer;
+      if (selected === correct) {
+        feedbackEl.textContent = '✅ Correct!';
+        feedbackEl.className = 'feedback correct';
+        score++;
+      } else {
+        feedbackEl.textContent = `❌ Wrong! Correct answer: ${quizData[currentQuestion].options[correct]}`;
+        feedbackEl.className = 'feedback wrong';
+      }
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = 'inline-block';
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    };
+
+    function showResult() {
+      document.getElementById('quiz').style.display = 'none';
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = `<h2>Your Score: ${score}/${quizData.length}</h2><button class='next-btn' onclick='restartQuiz()'>Retry Quiz</button>`;
+    }
+
+    function restartQuiz() {
+      score = 0;
+      currentQuestion = 0;
+      document.getElementById('quiz').style.display = 'block';
+      resultEl.style.display = 'none';
+      showQuestion();
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
