@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Midterm Quiz — Quiz 3 replica v1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0e0e10;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .quiz-container {
+      background: #1e1e22;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      max-width: 700px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #00c6ff;
+    }
+    .question {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    .options button {
+      display: block;
+      background: #2c2c33;
+      color: #f0f0f0;
+      border: none;
+      border-radius: 8px;
+      margin: 6px 0;
+      padding: 10px;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options button:hover {
+      background: #3d3d44;
+    }
+    .feedback {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .correct { color: #00ff88; }
+    .wrong { color: #ff5555; }
+    .next-btn {
+      margin-top: 15px;
+      background: #00c6ff;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .next-btn:hover {
+      background: #009bd1;
+    }
+    .result {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Interactive Midterm Quiz</h1>
+    <h1>Interactive Midterm Quiz — Quiz 3 replica </h1>
+    <div id="quiz">
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <button id="next-btn" class="next-btn" style="display:none;">Next</button>
+    </div>
+    <div id="result" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    const quizData = [
+{ q: "Mass-based or grassroots organizations are focused on:", options: ["Corporate expansion", "Political, social, or economic mobilization", "Government regulation", "Urban development"], answer: 1 },
+{ q: "Cooperatives are characterized by:", options: ["Hierarchical ownership structure", "Government-controlled policies", "Democratic control", "Dependence on large corporations"], answer: 2 },
+{ q: "Unlike commercial banks, MFIs usually require:", options: ["Long lists of collateral", "Government bonds", "Few and relevant documents only", "Credit ratings from major agencies"], answer: 2 },
+{ q: "NGOs mainly operate in which areas?", options: ["Metropolitan business centers", "Remote rural areas", "Export processing zones", "Government offices"], answer: 1 },
+{ q: "Microfinance procedures are generally:", options: ["Complicated and document-heavy", "Simple and easy to understand", "Only available to large borrowers", "Regulated internationally"], answer: 1 },
+{ q: "The overall purpose of MFIs compared to commercial banks is to:", options: ["Promote financial inclusion", "Prioritize corporate profits", "Focus on foreign investments", "Support stock market growth"], answer: 0 },
+{ q: "MFI products are usually:", options: ["Complex and highly customized", "Simple, affordable, and accessible", "Expensive and exclusive", "Focused on luxury savings"], answer: 1 },
+{ q: "Which of the following is NOT a category of MFIs?", options: ["NGOs", "Cooperatives", "Mass-based organizations", "Stock exchange brokers"], answer: 3 },
+{ q: "What kind of clients do commercial banks generally serve?", options: ["Poor and non-bankable clients", "Highly bankable and well-to-do families", "Low-income farmers", "Unemployed individuals"], answer: 1 },
+{ q: "What is the main mission of Microfinance Institutions (MFIs)?", options: ["To maximize shareholder profit", "To improve the quality of life of the poor", "To compete with commercial banks", "To finance large corporations"], answer: 1 },
+{ q: "One of the MFIs' objectives is to create opportunities for:", options: ["High-income investors", "Self-employment among the underprivileged", "Global trade expansion", "Political campaigning"], answer: 1 },
+{ q: "Civic organizations and clubs as MFIs mainly aim to:", options: ["Serve wealthy business owners", "Provide financial services to socially and economically challenged families", "Promote luxury banking", "Finance government projects"], answer: 1 },
+{ q: "The focus of microfinance is primarily on:", options: ["Market share and profitability", "Reaching out to the poor", "International expansion", "Real estate investment"], answer: 1 },
+{ q: "Which of the following is a goal of MFIs?", options: ["Reduce market competition", "Provide access to financial and support services for the poor", "Increase interest rates for profit", "Focus only on urban clients"], answer: 1 },
+{ q: "What is the primary clientele of microfinance-oriented rural banks?", options: ["Large-scale entrepreneurs", "Small depositors", "Government employees", "Corporate investors"], answer: 1 },
+{ q: "Microfinance institutions differ from commercial banks mainly in their:", options: ["Target market", "Use of technology", "Loan currency", "Accounting methods"], answer: 0 },
+{ q: "Which group is particularly targeted by MFIs for empowerment?", options: ["Government officials", "Urban employees", "Women in poverty", "Large companies"], answer: 2 },
+{ q: "Governance in MFIs typically allows:", options: ["Only shareholders to make decisions", "Client participation", "Political influence in board composition", "Exclusive decision-making by banks"], answer: 1 },
+{ q: "In terms of location, MFIs are usually found in:", options: ["Capital cities only", "Remote and accessible rural or urban areas", "Online-only environments", "Industrial zones"], answer: 1 },
+{ q: "In terms of customer acquisition, MFIs:", options: ["Require clients to visit main branches", "Bring services directly to their home", "Operate exclusively online", "Focus on credit card services"], answer: 1 },
+
+];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const feedbackEl = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const resultEl = document.getElementById('result');
+
+    function showQuestion() {
+      const item = quizData[currentQuestion];
+      questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+      optionsEl.innerHTML = '';
+      feedbackEl.textContent = '';
+      nextBtn.style.display = 'none';
+
+      item.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const correct = quizData[currentQuestion].answer;
+      if (selected === correct) {
+        feedbackEl.textContent = '✅ Correct!';
+        feedbackEl.className = 'feedback correct';
+        score++;
+      } else {
+        feedbackEl.textContent = `❌ Wrong! Correct answer: ${quizData[currentQuestion].options[correct]}`;
+        feedbackEl.className = 'feedback wrong';
+      }
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = 'inline-block';
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    };
+
+    function showResult() {
+      document.getElementById('quiz').style.display = 'none';
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = `<h2>Your Score: ${score}/${quizData.length}</h2><button class='next-btn' onclick='restartQuiz()'>Retry Quiz</button>`;
+    }
+
+    function restartQuiz() {
+      score = 0;
+      currentQuestion = 0;
+      document.getElementById('quiz').style.display = 'block';
+      resultEl.style.display = 'none';
+      showQuestion();
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
