@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Group 1 Quiz - Finals</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Group 1 Quiz - Finals (40)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+    { q: "What question best reflects the challenge of defining Filipino identity?", options: ["What is democracy?", "Who are Filipinos?", "What is colonial mentality?", "What is pakikipagkapwa-tao?"], answer: 1 },
+
+{ q: "Which group shaped early Filipino behavior with kindness, respect, and family orientation?", options: ["Spaniards", "Americans", "Malays", "Japanese"], answer: 2 },
+
+{ q: "Which colonizer introduced Catholicism and Western-style government?", options: ["British", "Spaniards", "Americans", "Japanese"], answer: 1 },
+
+{ q: "Why is English widely spoken in the Philippines today?", options: ["Spanish colonization", "American influence", "British occupation", "Japanese rule"], answer: 1 },
+
+{ q: "Which colonizers had short-term presence with little lasting cultural impact?", options: ["Spaniards and Americans", "British and Japanese", "Malays and Chinese", "Americans and Malays"], answer: 1 },
+
+{ q: "Which environment teaches Filipinos to value family above all?", options: ["Economic", "Home", "Political", "Social"], answer: 1 },
+
+{ q: "Group orientation among Filipinos comes from which factor?", options: ["Religion", "Social environment", "Mass media", "Leadership"], answer: 1 },
+
+{ q: "Colonial mentality is rooted in which factor?", options: ["History", "Religion", "Education", "Family"], answer: 0 },
+
+{ q: "Which factor instilled optimism but also fatalism?", options: ["Education", "Religion", "Mass media", "Politics"], answer: 1 },
+
+{ q: "Which factor reinforced colonial mentality through influence?", options: ["Mass media", "Family", "Leadership", "Economy"], answer: 0 },
+
+{ q: "Which trait is shown in bayanihan and hospitality?", options: ["Joy and humor", "Pakikipagkapwa-tao", "Faith and religiosity", "Hard work"], answer: 1 },
+
+{ q: "Which trait emphasizes extended family ties?", options: ["Family orientation", "Crab mentality", "Creativity", "Passivity"], answer: 0 },
+
+{ q: "Which trait allows Filipinos to laugh at fortune or misfortune?", options: ["Joy and humor", "Faith", "Adaptability", "Industry"], answer: 0 },
+
+{ q: "Which trait helps Filipinos improvise and adjust to circumstances?", options: ["Flexibility, adaptability, creativity", "Hard work", "Faith", "Survival"], answer: 0 },
+
+{ q: "Which trait is linked to the bahala na mindset?", options: ["Faith and religiosity", "Joy and humor", "Industry", "Family orientation"], answer: 0 },
+
+{ q: "Which trait explains why Filipinos endure hardships with hope?", options: ["Ability to survive", "Crab mentality", "Passivity", "Family orientation"], answer: 0 },
+
+{ q: "Emotional involvement in tasks reflects which weakness?", options: ["Extreme personalism", "Crab mentality", "Passivity", "Family orientation"], answer: 0 },
+
+{ q: "The 'palakasan system' refers to:", options: ["Reliance on connections", "Joyfulness", "Discipline", "Humor"], answer: 0 },
+
+{ q: "Political dynasties reflect which weakness?", options: ["Extreme family centeredness", "Crab mentality", "Passivity", "Colonial mentality"], answer: 0 },
+
+{ q: "Projects started with enthusiasm but left unfinished describe:", options: ["Crab mentality", "Ningas cogon", "Filipino time", "Passivity"], answer: 1 },
+
+{ q: "Chronic lateness is known as:", options: ["Filipino time", "Crab mentality", "Bahala na", "Kanya-kanya syndrome"], answer: 0 },
+
+{ q: "Reliance on leaders to solve problems reflects:", options: ["Passivity and lack of initiative", "Crab mentality", "Joyfulness", "Family orientation"], answer: 0 },
+
+{ q: "Inferiority complex toward foreigners is called:", options: ["Colonial mentality", "Crab mentality", "Kanya-kanya syndrome", "Passivity"], answer: 0 },
+
+{ q: "Self-interest over the common good is:", options: ["Kanya-kanya syndrome", "Crab mentality", "Extreme personalism", "Passivity"], answer: 0 },
+
+{ q: "Pulling others down to rise is:", options: ["Crab mentality", "Colonial mentality", "Joyfulness", "Passivity"], answer: 0 },
+
+{ q: "Forgetting mistakes and re-electing 'trapos' shows:", options: ["Lack of self-reflection", "Crab mentality", "Family orientation", "Passivity"], answer: 0 },
+
+{ q: "Democracy is defined as:", options: ["Rule by elite", "Power vested in the people", "Dictatorship", "Rule by military"], answer: 1 },
+
+{ q: "Which is NOT a benefit of democracy?", options: ["Prevents dictatorship", "Improves education", "Protects rights", "Promotes colonial mentality"], answer: 3 },
+
+{ q: "Which attitude is essential for democracy?", options: ["Passivity", "Responsibility", "Crab mentality", "Fatalism"], answer: 1 },
+
+{ q: "Which personality type supports democratic ideals?", options: ["Closed-minded", "Open-minded and outgoing", "Passive", "Fatalistic"], answer: 1 },
+
+{ q: "Which influence shapes beliefs and values most directly?", options: ["Family", "Friends", "Culture", "Media"], answer: 0 },
+
+{ q: "Which influence actively shapes perspectives and opinions?", options: ["Friends", "Family", "Culture", "Media"], answer: 0 },
+
+{ q: "Which influence enriches political identity through celebrations?", options: ["Culture", "Family", "Friends", "Media"], answer: 0 },
+
+{ q: "Which influence impacts understanding of politics through exposure?", options: ["Media", "Family", "Friends", "Culture"], answer: 0 },
+
+{ q: "Which Filipino strength helps in overseas work?", options: ["Hard work and industry", "Joy and humor", "Faith", "Survival"], answer: 0 },
+
+{ q: "Which weakness explains why traffic problems persist?", options: ["Passivity and lack of initiative", "Crab mentality", "Joyfulness", "Family orientation"], answer: 0 },
+
+{ q: "Which trait explains resilience despite poverty?", options: ["Ability to survive", "Crab mentality", "Passivity", "Colonial mentality"], answer: 0 },
+
+{ q: "Which weakness is linked to re-election of corrupt leaders?", options: ["Lack of self-reflection", "Crab mentality", "Passivity", "Family orientation"], answer: 0 },
+
+{ q: "Which Filipino strength is most tied to bayanihan?", options: ["Pakikipagkapwa-tao", "Joy and humor", "Faith", "Survival"], answer: 0 },
+
+{ q: "Which influence combines with media to shape political identity?", options: ["Family and friends", "Culture and colonial mentality", "Joy and humor", "Crab Mentality"], answer: 0 },
+
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
