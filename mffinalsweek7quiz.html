@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MF Week 7 topic (40)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>MF Week 7 topic Reviewer (40)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+    { q: "What does the “double bottom line” in microfinance refer to?", options: ["Financial and environmental goals", "Financial and social goals", "Profit and expansion goals", "Legal and ethical goals"], answer: 1 },
+{ q: "Microfinance is considered a social enterprise because:", options: ["It focuses only on profit", "Financial returns are a means to a social end", "It avoids financial sustainability", "It is run by governments"], answer: 1 },
+{ q: "Which issue was reported in Bangladesh in 2008 regarding microfinance?", options: ["Rapid poverty alleviation", "People plunged deeper into debt", "Free loans for rural women", "Elimination of interest rates"], answer: 1 },
+{ q: "Mission drift occurs when:", options: ["NGOs transform into banks and prioritize financial growth", "Microfinance institutions stop lending", "Clients refuse to repay loans", "Governments ban microfinance"], answer: 0 },
+{ q: "What is the main risk of mission drift?", options: ["Increased transparency", "Loss of focus on social goals", "Higher client retention", "Better financial reporting"], answer: 1 },
+{ q: "Social performance refers to:", options: ["How effectively an organization achieves its social goals", "The financial sustainability of an institution", "Government regulation of NGOs", "Employee satisfaction only"], answer: 0 },
+{ q: "Which of the following is NOT a social value in microfinance?", options: ["Reaching excluded people", "Supporting enterprises", "Maximizing shareholder profit", "Creating household benefits"], answer: 2 },
+{ q: "One social goal is to help poor women and families. A SMART objective is:", options: ["First loan size below $50", "Interest rates above 100%", "100% urban clients", "No client retention targets"], answer: 0 },
+{ q: "Providing quality financial services includes:", options: ["Client retention above 80%", "Charging hidden fees", "Limiting insurance products", "Avoiding transparency"], answer: 0 },
+{ q: "Improving well-being can be measured by:", options: ["95% of children attending school after 2 years", "100% loan repayment in 1 year", "Clients owning businesses immediately", "Eliminating poverty in 6 months"], answer: 0 },
+{ q: "SPM focuses on:", options: ["Translating social mission into practice", "Maximizing profit margins", "Government regulation only", "Employee turnover"], answer: 0 },
+{ q: "SPM is about:", options: ["Results and the process to achieve them", "Only financial reporting", "Eliminating social goals", "Avoiding transparency"], answer: 0 },
+{ q: "Which is a benefit of SPM?", options: ["Helps employees understand the organization", "Reduces transparency", "Eliminates client needs", "Focuses only on profit"], answer: 0 },
+{ q: "SPM fosters a culture that is:", options: ["Results-driven", "Profit-only", "Client-avoiding", "Employee-exclusive"], answer: 0 },
+{ q: "Which law requires institutionalized SPM in the Philippines?", options: ["Republic Act 10693", "Republic Act 10963", "Republic Act 9165", "Republic Act 9003"], answer: 0 },
+{ q: "CARD MRI’s vision is to be:", options: ["A world-class leader in microfinance and social development", "A profit-maximizing bank", "A government-owned institution", "A global insurance company"], answer: 0 },
+{ q: "CARD MRI’s mission includes:", options: ["Empowering women through access to financial and social services", "Eliminating financial services", "Focusing only on men’s employment", "Avoiding partnerships"], answer: 0 },
+{ q: "Which service is NOT part of CARD MRI’s mission?", options: ["Microinsurance", "Livelihood programs", "Health services", "Political campaigning"], answer: 3 },
+{ q: "CARD MRI enables women members to:", options: ["Gain control and ownership of institutions", "Avoid financial responsibility", "Depend solely on government aid", "Focus only on household chores"], answer: 0 },
+{ q: "CARD MRI partners with:", options: ["Agencies, private institutions, and communities", "Only international banks", "Political parties", "No external organizations"], answer: 0 },
+{ q: "The Progress out of Poverty Index (PPI) is:", options: ["A 10-indicator composite index", "A government tax system", "A loan repayment tracker", "An insurance policy"], answer: 0 },
+{ q: "PPI indicators are:", options: ["Observable and practical", "Hidden and complex", "Financial ratios only", "Political affiliations"], answer: 0 },
+{ q: "PPI was developed by:", options: ["Mark Schreiner", "Muhammad Yunus", "Paolo Aquino", "CARD MRI"], answer: 0 },
+{ q: "PPI scoring results in:", options: ["Accurate poverty profiling", "Loan repayment schedules", "Employee satisfaction surveys", "Government tax reports"], answer: 0 },
+{ q: "PPI uses:", options: ["Logit regressions on survey data", "Random guessing", "Political surveys", "Insurance claims"], answer: 0 },
+{ q: "Universal Standard 1 is about:", options: ["Defining and monitoring social goals", "Maximizing profit", "Avoiding transparency", "Employee turnover"], answer: 0 },
+{ q: "Universal Standard 2 ensures:", options: ["Board, management, and employee commitment", "Client avoidance", "Profit maximization only", "Government regulation"], answer: 0 },
+{ q: "Universal Standard 3 focuses on:", options: ["Designing products and services that meet client needs", "Eliminating client feedback", "Raising interest rates", "Avoiding transparency"], answer: 0 },
+{ q: "Universal Standard 4 emphasizes:", options: ["Treating clients responsibly", "Ignoring client complaints", "Maximizing profit", "Avoiding transparency"], answer: 0 },
+{ q: "Universal Standard 5 emphasizes:", options: ["Treating employees responsibly", "Ignoring employee rights", "Maximizing profit", "Avoiding training"], answer: 0 },
+{ q: "Preventing over-indebtedness is part of:", options: ["Treating clients responsibly", "Treating employees responsibly", "Defining social goals", "Maximizing profit"], answer: 0 },
+{ q: "Transparency means:", options: ["Clients fully understand loan interest rates", "Hiding fees", "Avoiding communication", "Ignoring client needs"], answer: 0 },
+{ q: "Fair and respectful treatment of clients includes:", options: ["Avoiding intimidation", "Charging hidden fees", "Ignoring complaints", "Forcing enrollment"], answer: 0 },
+{ q: "Privacy of client data ensures:", options: ["Confidentiality", "Public disclosure", "Government access only", "Ignoring client rights"], answer: 0 },
+{ q: "Complaint resolution mechanisms are designed to:", options: ["Address client concerns", "Avoid transparency", "Ignore feedback", "Maximize profit"], answer: 0 },
+{ q: "Universal Standard 6 focuses on:", options: ["Balancing financial and social performance", "Maximizing profit only", "Ignoring social goals", "Eliminating transparency"], answer: 0 },
+{ q: "Growth rates must promote:", options: ["Financial sustainability and client well-being", "Profit maximization only", "Employee turnover", "Government regulation"], answer: 0 },
+{ q: "Pursuit of profits should not undermine:", options: ["Long-term sustainability and client well-being", "Shareholder dividends", "Government taxes", "Employee turnover"], answer: 0 },
+{ q: "Executive compensation should be:", options: ["Appropriate to a double bottom line institution", "Maximized for profit", "Ignored completely", "Based on political affiliation"], answer: 0 },
+{ q: "Equity investors and lenders must align on:", options: ["The institution’s double bottom line", "Government regulation only", "Profit maximization only", "Employee turnover"], answer: 0 },
+
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>

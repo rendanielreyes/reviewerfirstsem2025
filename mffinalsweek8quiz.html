@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MF Week 8 topic (40)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>MF Week 8 topic Reviewer (40)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+    { q: "When were the Millennium Development Goals (MDGs) adopted?", options: ["1995", "2000", "2005", "2010"], answer: 1 },
+{ q: "How many MDGs were established in 2000?", options: ["6", "8", "10", "12"], answer: 1 },
+{ q: "Which MDG focused on achieving universal primary education?", options: ["Eradicate Extreme Poverty and Hunger", "Achieve Universal Primary Education", "Promote Gender Equality", "Reduce Child Mortality"], answer: 1 },
+{ q: "The 2030 Agenda for Sustainable Development was adopted in:", options: ["January 2015", "March 2015", "September 2015", "December 2015"], answer: 2 },
+{ q: "How many Sustainable Development Goals (SDGs) are there?", options: ["15", "16", "17", "18"], answer: 2 },
+{ q: "Which framework was adopted in March 2015 for disaster risk reduction?", options: ["Paris Agreement", "Addis Ababa Action Agenda", "Sendai Framework", "Kyoto Protocol"], answer: 2 },
+{ q: "The Addis Ababa Action Agenda focused on:", options: ["Climate change", "Financing for development", "Gender equality", "Education"], answer: 1 },
+{ q: "Which agreement was adopted in December 2015?", options: ["Paris Agreement on Climate Change", "Sendai Framework", "Addis Ababa Action Agenda", "Kyoto Protocol"], answer: 0 },
+{ q: "The SDGs emphasize five critical areas: People, Planet, Prosperity, Peace, and:", options: ["Progress", "Partnership", "Policy", "Protection"], answer: 1 },
+{ q: "Which SDG is about ending poverty in all its forms everywhere?", options: ["Zero Hunger", "No Poverty", "Reduced Inequalities", "Decent Work and Economic Growth"], answer: 1 },
+{ q: "Which SDG aims to end hunger, achieve food security, improve nutrition, and promote sustainable agriculture?", options: ["No Poverty", "Zero Hunger", "Good Health and Well-being", "Responsible Consumption and Production"], answer: 1 },
+{ q: "Which SDG ensures healthy lives and promotes well-being for all at all ages?", options: ["Good Health and Well-being", "Quality Education", "Gender Equality", "Clean Water and Sanitation"], answer: 0 },
+{ q: "Childhood deaths have been reduced by half in the last 15 years. Which SDG does this progress reflect?", options: ["Good Health and Well-being", "Gender Equality", "Quality Education", "No Poverty"], answer: 0 },
+{ q: "Which SDG ensures inclusive and equitable quality education and promotes lifelong learning opportunities for all?", options: ["Quality Education", "Gender Equality", "Decent Work and Economic Growth", "Industry, Innovation and Infrastructure"], answer: 0 },
+{ q: "Primary school enrollment in developing regions reached 91%. Which SDG does this achievement support?", options: ["Quality Education", "Gender Equality", "Reduced Inequalities", "Sustainable Cities and Communities"], answer: 0 },
+{ q: "Which SDG is about achieving gender equality and empowering all women and girls?", options: ["Gender Equality", "Reduced Inequalities", "Peace, Justice and Strong Institutions", "Partnerships for the Goals"], answer: 0 },
+{ q: "As of January 2025, women held 27.2% of national parliament seats. Which SDG is most relevant?", options: ["Gender Equality", "Reduced Inequalities", "Peace, Justice and Strong Institutions", "Partnerships for the Goals"], answer: 0 },
+{ q: "Which SDG ensures availability and sustainable management of water and sanitation for all?", options: ["Clean Water and Sanitation", "Affordable and Clean Energy", "Climate Action", "Life on Land"], answer: 0 },
+{ q: "Safely managed drinking water coverage reached 74% in 2024. Which SDG does this progress reflect?", options: ["Clean Water and Sanitation", "Affordable and Clean Energy", "Climate Action", "Life on Land"], answer: 0 },
+{ q: "Which SDG ensures access to affordable, reliable, sustainable, and modern energy for all?", options: ["Affordable and Clean Energy", "Industry, Innovation and Infrastructure", "Responsible Consumption and Production", "Partnerships for the Goals"], answer: 0 },
+{ q: "Global electricity access rose from 84% in 2010 to 92% in 2023. Which SDG is most relevant?", options: ["Affordable and Clean Energy", "Industry, Innovation and Infrastructure", "Climate Action", "Partnerships for the Goals"], answer: 0 },
+{ q: "Which SDG promotes sustained, inclusive, and sustainable economic growth, full and productive employment, and decent work for all?", options: ["Decent Work and Economic Growth", "Reduced Inequalities", "Sustainable Cities and Communities", "No Poverty"], answer: 0 },
+{ q: "138 million children were in child labor in 2024. Which SDG addresses this issue?", options: ["Decent Work and Economic Growth", "Reduced Inequalities", "Quality Education", "Gender Equality"], answer: 0 },
+{ q: "Which SDG builds resilient infrastructure, promotes inclusive and sustainable industrialization, and fosters innovation?", options: ["Industry, Innovation and Infrastructure", "Climate Action", "Life Below Water", "Partnerships for the Goals"], answer: 0 },
+{ q: "Global 5G coverage in low-income countries was only 4%. Which SDG is most relevant?", options: ["Industry, Innovation and Infrastructure", "Reduced Inequalities", "Sustainable Cities and Communities", "Partnerships for the Goals"], answer: 0 },
+{ q: "Which SDG reduces inequality within and among countries?", options: ["Reduced Inequalities", "Gender Equality", "No Poverty", "Peace, Justice and Strong Institutions"], answer: 0 },
+{ q: "Persons with disabilities reported discrimination at 28%. Which SDG addresses this issue?", options: ["Reduced Inequalities", "Gender Equality", "Peace, Justice and Strong Institutions", "No Poverty"], answer: 0 },
+{ q: "Which SDG makes cities and human settlements inclusive, safe, resilient, and sustainable?", options: ["Sustainable Cities and Communities", "Responsible Consumption and Production", "Climate Action", "Life on Land"], answer: 0 },
+{ q: "1.12 billion people live in slums or informal settlements. Which SDG is most relevant?", options: ["Sustainable Cities and Communities", "Responsible Consumption and Production", "Climate Action", "Life on Land"], answer: 0 },
+{ q: "Which SDG ensures sustainable consumption and production patterns?", options: ["Responsible Consumption and Production", "Zero Hunger", "Climate Action", "Partnerships for the Goals"], answer: 0 },
+{ q: "19% of food is wasted at the consumer level. Which SDG addresses this issue?", options: ["Responsible Consumption and Production", "Zero Hunger", "Climate Action", "Partnerships for the Goals"], answer: 0 },
+{ q: "Which SDG takes urgent action to combat climate change and its impacts?", options: ["Climate Action", "Life Below Water", "Life on Land", "Peace, Justice and Strong Institutions"], answer: 0 },
+{ q: "Global temperature in 2024 reached 1.55°C above pre-industrial levels. Which SDG is most relevant?", options: ["Climate Action", "Life Below Water", "Life on Land", "No Poverty"], answer: 0 },
+{ q: "Which SDG conserves and sustainably uses the oceans, seas, and marine resources?", options: ["Life Below Water", "Climate Action", "Responsible Consumption and Production", "Partnerships for the Goals"], answer: 0 },
+{ q: "Coral reefs are projected to die off completely at 2°C warming. Which SDG is most relevant?", options: ["Life Below Water", "Climate Action", "Responsible Consumption and Production", "Partnerships for the Goals"], answer: 0 },
+{ q: "Which SDG protects, restores, and promotes sustainable use of terrestrial ecosystems, manages forests, combats desertification, and halts biodiversity loss?", options: ["Life on Land", "Climate Action", "Industry, Innovation and Infrastructure", "Reduced Inequalities"], answer: 0 },
+{ q: "The Red List Index has declined by 12% since 1993, showing species extinction risks. Which SDG is most relevant?", options: ["Life on Land", "Climate Action", "Industry, Innovation and Infrastructure", "Reduced Inequalities"], answer: 0 },
+{ q: "Which SDG promotes peaceful and inclusive societies, provides access to justice for all, and builds effective institutions?", options: ["Peace, Justice and Strong Institutions", "Partnerships for the Goals", "Gender Equality", "Reduced Inequalities"], answer: 0 },
+{ q: "Nearly 50,000 lives were lost to conflict in 2024. Which SDG addresses this issue?", options: ["Peace, Justice and Strong Institutions", "Partnerships for the Goals", "Gender Equality", "Reduced Inequalities"], answer: 0 },
+{ q: "Which SDG strengthens the means of implementation and revitalizes the global partnership for sustainable development?", options: ["Partnerships for the Goals", "Peace, Justice and Strong Institutions", "Industry, Innovation and Infrastructure", "Decent Work and Economic Growth"], answer: 0 },
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
