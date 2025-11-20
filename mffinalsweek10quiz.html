@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MF Week 10 topic (37)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>MF Week 10 topic Reviewer (37)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+    { q: "What principle ensures products match client needs and include feedback?", options: ["Responsible Pricing", "Appropriate Product Design and Delivery", "Transparency", "Fair Treatment"], answer: 1 },
+{ q: "What principle checks repayment capacity and credit bureau data?", options: ["Prevention of Over-Indebtedness", "Transparency", "Privacy of Client Data", "Responsible Pricing"], answer: 0 },
+{ q: "Transparency requires loan costs to be communicated how?", options: ["Only verbally", "Only in writing", "Both verbally and in writing", "Not required"], answer: 2 },
+{ q: "Which principle avoids excessive or hidden fees?", options: ["Privacy of Data", "Complaint Resolution", "Responsible Pricing", "Product Design"], answer: 2 },
+{ q: "Republic Act No. 7394 supports which principle?", options: ["Fair and Respectful Treatment", "Transparency", "Privacy of Client Data", "Responsible Pricing"], answer: 0 },
+{ q: "What law protects client data privacy?", options: ["RA 9003", "RA 10173", "RA 7394", "RA 9165"], answer: 1 },
+{ q: "What is the goal of complaint resolution mechanisms?", options: ["Ignore feedback", "Enable client complaints and resolution", "Reduce participation", "Punish staff"], answer: 1 },
+{ q: "Which principle trains staff on respectful treatment?", options: ["Fair and Respectful Treatment", "Transparency", "Complaint Resolution", "Responsible Pricing"], answer: 0 },
+{ q: "CARD MRI’s mission focuses on:", options: ["Profit maximization", "Client exclusion", "Poverty eradication", "Data collection"], answer: 2 },
+{ q: "What system manages consumer protection risks?", options: ["Consumer Protection Risk Management System", "Exit Survey System", "Loan Monitoring System", "Feedback System"], answer: 0 },
+{ q: "CPCP stands for:", options: ["Client Protection and Compliance Program", "Consumer Protection Compliance Program", "Community Participation and Control Plan", "Client Participation and Control Program"], answer: 1 },
+{ q: "Which principle ensures clients know their rights?", options: ["Complaint Resolution", "Fair and Respectful Treatment", "Transparency", "Privacy of Client Data"], answer: 1 },
+{ q: "What protects client data using technology?", options: ["Responsible Pricing", "Complaint Resolution", "Privacy of Client Data", "Transparency"], answer: 2 },
+{ q: "CARD MRI’s Research Unit focuses on:", options: ["Legal disputes", "Marketing", "Operational issues and surveys", "Loan management"], answer: 2 },
+{ q: "Client participation in governance promotes:", options: ["Good Governance", "Profit maximization", "Client exclusion", "Top-down decisions"], answer: 0 },
+{ q: "Which principle avoids discriminatory fees?", options: ["Privacy of Data", "Complaint Resolution", "Transparency", "Responsible Pricing"], answer: 3 },
+{ q: "First step in handling complaints:", options: ["Apologize", "Offer solution", "Stay calm and composed", "Log complaint"], answer: 2 },
+{ q: "Step involving responsibility and acknowledgment:", options: ["Step 5", "Step 9", "Step 3", "Step 7"], answer: 2 },
+{ q: "What is offered in the sample complaint response?", options: ["Refund", "Free item", "50% off next appointment", "Public apology"], answer: 2 },
+{ q: "Listening culture improves:", options: ["Marketing", "Loan collection", "Response to member needs", "Client retention"], answer: 2 },
+{ q: "What principle involves verbal and written loan cost disclosure?", options: ["Transparency", "Responsible Pricing", "Complaint Resolution", "Product Design"], answer: 0 },
+{ q: "What principle uses client feedback in product creation?", options: ["Responsible Pricing", "Appropriate Product Design and Delivery", "Transparency", "Privacy of Data"], answer: 1 },
+{ q: "What principle prevents clients from excessive debt?", options: ["Prevention of Over-Indebtedness", "Transparency", "Complaint Resolution", "Responsible Pricing"], answer: 0 },
+{ q: "Which principle ensures fair pricing?", options: ["Privacy of Data", "Responsible Pricing", "Complaint Resolution", "Product Design"], answer: 1 },
+{ q: "What law ensures data privacy in the Philippines?", options: ["RA 7394", "RA 10173", "RA 9165", "RA 9003"], answer: 1 },
+{ q: "What principle ensures respectful treatment of clients?", options: ["Fair and Respectful Treatment", "Transparency", "Complaint Resolution", "Responsible Pricing"], answer: 0 },
+{ q: "What principle ensures clients can submit complaints?", options: ["Privacy of Data", "Mechanisms for Complaint Resolution", "Responsible Pricing", "Product Design"], answer: 1 },
+{ q: "What is the purpose of CPCP?", options: ["Marketing strategy", "Guide staff in consumer protection compliance", "Loan collection", "Governance training"], answer: 1 },
+{ q: "What does CARD MRI use to monitor client repayment capacity?", options: ["Surveys", "Credit bureau data", "Feedback forms", "Loan history"], answer: 1 },
+{ q: "What principle involves no hidden fees?", options: ["Transparency", "Responsible Pricing", "Complaint Resolution", "Product Design"], answer: 1 },
+{ q: "What principle ensures clients are treated fairly by collectors?", options: ["Fair and Respectful Treatment", "Transparency", "Responsible Pricing", "Complaint Resolution"], answer: 0 },
+{ q: "What principle ensures client data is secure?", options: ["Responsible Pricing", "Complaint Resolution", "Privacy of Client Data", "Transparency"], answer: 2 },
+{ q: "What does RA 10173 protect?", options: ["Loan rights", "Personal data", "Product pricing", "Complaint handling"], answer: 1 },
+{ q: "What does RA 7394 protect?", options: ["Consumer rights", "Data privacy", "Loan pricing", "Governance"], answer: 0 },
+{ q: "What principle uses client feedback for product delivery?", options: ["Responsible Pricing", "Appropriate Product Design and Delivery", "Complaint Resolution", "Privacy of Data"], answer: 1 },
+{ q: "What system identifies and controls consumer risks?", options: ["Loan Monitoring", "Consumer Protection Risk Management System", "Feedback System", "Governance System"], answer: 1 },
+{ q: "What is the final step in complaint handling?", options: ["Apologize", "Offer solution", "Log complaint", "Improve customer experience"], answer: 3 },
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
