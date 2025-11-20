@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Interactive Quiz Reviewer 2025 - 1st Sem</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root{
       --bg:#0f1724;
@@ -111,6 +112,45 @@
       .search{width:100%;}
       header h1{font-size:1.3rem;}
     }
+
+		
+.discord-button {
+            display: inline-flex; /* Allows icon and text to sit side-by-side */
+            align-items: center;
+            justify-content: center;
+            padding: 12px 25px; /* Adjust padding for size */
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none; /* Remove underline from link */
+            color: #ffffff; /* White text color */
+            background-color: #5865f2; /* Official Discord Blue */
+            border: none;
+            border-radius: 8px; /* Modern rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+            cursor: pointer;
+        }
+
+        .discord-button:hover {
+            background-color: #4e5ad4; /* Slightly darker on hover */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Bigger shadow on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+
+        .discord-button:active {
+            transform: translateY(0); /* Press-down effect */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background-color: #4751bb; /* Even darker on press */
+        }
+
+        .discord-button .fab {
+            margin-right: 10px; /* Space between the icon and the text */
+            font-size: 20px; /* Adjust icon size */
+        }
+
+
+
   </style>
 </head>
 <body>
@@ -162,7 +202,11 @@
     </main>
 
     <footer>
-      © Interactive Quiz Reviewer 2025 — First Semester • Built for quick navigation. 
+	<p><a href="https://discord.gg/8G5kNxgKvY" target="_blank" class="discord-button">
+        <i class="fab fa-discord"></i> 
+        Join the Discord
+    </a></p>
+      <p>© Interactive Quiz Reviewer 2025 — First Semester • Built for quick navigation. </p>
     </footer>
   </div>
 
