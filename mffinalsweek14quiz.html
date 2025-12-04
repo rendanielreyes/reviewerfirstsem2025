@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MF Week 14 topic (35)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>MF Week 14 topic Reviewer (35)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+{ q: "What is the definition of savings as given in the module?", 
+  options: ["Money you plan to spend next month", "Money you've earned that is left over after all of your spending and other expenses have been completed", "Money borrowed from friends or family", "Money invested in stocks for short-term gains"], 
+  answer: 1 
+},
+{ q: "According to the rule of savings presented, which formula reflects prioritizing saving first?", 
+  options: ["INCOME − EXPENSES = SAVINGS", "SAVINGS − INCOME = EXPENSES", "INCOME − SAVINGS = EXPENSES", "EXPENSES − SAVINGS = INCOME"], 
+  answer: 2 
+},
+{ q: "Which of the following is listed as a savings mechanism in the module?", 
+  options: ["Cryptocurrency exchanges", "Coin banks at home", "Peer-to-peer lending platforms", "Stock market day trading"], 
+  answer: 1 
+},
+{ q: "Which item is an example of saving through physical assets as described in the PDF?", 
+  options: ["Keeping cash under the mattress", "Buying land, livestock, machinery, and jewelry", "Opening a checking account", "Using a mobile wallet for daily payments"], 
+  answer: 1 
+},
+{ q: "Which feature is highlighted for banks in the savings mechanisms section?", 
+  options: ["They never pay interest", "They enable deposit for safekeeping while earning interest and use technological innovation like e-money or mobile financial services", "They require extremely high minimum balances for all accounts", "They only serve corporate clients"], 
+  answer: 1 
+},
+{ q: "Which is not listed as an advantage of saving in a bank?", 
+  options: ["Easy access", "Security", "Access to other services", "Guaranteed double returns every year"], 
+  answer: 3 
+},
+{ q: "What does PDIC stand for and what is its purpose according to the module?", 
+  options: ["Philippine Development Investment Council; to invest in startups", "Philippine Deposit Insurance Corporation; to insure deposits of the general public in all banks", "Public Debt and Investment Commission; to manage government debt", "Private Deposit Insurance Company; to insure corporate bonds"], 
+  answer: 1 
+},
+{ q: "Under PDIC coverage mentioned in the PDF, deposits are insured up to what amount per depositor?", 
+  options: ["Php 100,000", "Php 500,000", "Php 1,000,000", "Php 10,000,000"], 
+  answer: 2 
+},
+{ q: "Which statistic about Filipino households and savings is stated in the module?", 
+  options: ["9 out of 10 households have deposit accounts", "1 out of 4 Filipino households have some form of savings", "100% of households save at banks", "7 out of 10 households save more than 50% of income"], 
+  answer: 1 
+},
+{ q: "What percentage of income is mentioned as going to savings in the PDF?", 
+  options: ["5%", "21%", "50%", "75%"], 
+  answer: 1 
+},
+{ q: "Where do most low-income groups in the Philippines keep their savings according to the module?", 
+  options: ["In foreign banks", "At home (coin banks)", "In government bonds", "In cryptocurrency wallets"], 
+  answer: 1 
+},
+{ q: "Which gender is noted as more inclined to save and manage household finances?", 
+  options: ["Men", "Women", "Children", "Teenagers"], 
+  answer: 1 
+},
+{ q: "What proportion of remittance from an OFW goes to savings as stated in the PDF?", 
+  options: ["1%", "7%", "25%", "50%"], 
+  answer: 1 
+},
+{ q: "Which regional comparison is made about savings in the module?", 
+  options: ["Philippines ranks first in savings as % of GDP", "Savings as % of GDP lags behind Asian neighbors such as Singapore, Malaysia, Indonesia, and Thailand", "Philippines has the highest household savings in Asia", "Philippines and Singapore have identical savings rates"], 
+  answer: 1 
+},
+{ q: "What are the general types of savings products listed?", 
+  options: ["Stocks, bonds, mutual funds, ETFs", "Regular savings/checking accounts; Time deposits; Savings accounts for specific markets; Microdeposits", "Insurance policies only", "Cryptocurrency wallets only"], 
+  answer: 1 
+},
+{ q: "What is a key characteristic of time deposits as described?", 
+  options: ["They can be withdrawn anytime without penalty", "They are held for a fixed term and pay higher yields compared to regular savings accounts", "They never earn interest", "They are only for children"], 
+  answer: 1 
+},
+{ q: "Which circular expanded microfinance products to include microdeposits, and in what year?", 
+  options: ["BSP Circular 500 in 2005", "BSP Circular 694 in 2010", "BSP Circular 800 in 2015", "BSP Circular 100 in 1990"], 
+  answer: 1 
+},
+{ q: "Which of the following is a feature of microdeposits per the module?", 
+  options: ["Minimum maintaining balance not exceeding Php 100", "Mandatory dormancy charges after 30 days", "Average daily balance must exceed Php 1,000,000", "Only available to corporations"], 
+  answer: 0 
+},
+{ q: "Which other feature of microdeposits is explicitly mentioned?", 
+  options: ["They charge high withdrawal fees", "No dormancy charges", "They require a notarized application only", "They are only offered online"], 
+  answer: 1 
+},
+{ q: "What is the stated limit for average daily balance in microdeposits?", 
+  options: ["Does not exceed Php 1,000,000", "Does not exceed Php 100,000", "Must be exactly Php 50,000", "No limit specified"], 
+  answer: 1 
+},
+{ q: "Where can deposits and withdrawals in microfinance be done according to the module?", 
+  options: ["Only at central bank headquarters", "In a Microfinance-Oriented Rural Bank or Branch Lite Unit (BLU)", "Only through international banks", "Only via mobile apps with no physical presence"], 
+  answer: 1 
+},
+{ q: "What is a Branch Lite Unit (BLU) as described in the PDF?", 
+  options: ["A full-service bank branch with all corporate services", "A scaled down or simplified office where banking transactions can be performed to enable access in areas not feasible for a full branch", "A luxury banking lounge for VIP clients", "An online-only virtual branch with no physical staff"], 
+  answer: 1 
+},
+{ q: "Which of the following is not one of the 10 tips to grow savings adapted from Microfinance Opportunities?", 
+  options: ["Save first, then allocate the rest of your income to expenses", "Save at least 10% of your income", "Spend wisely and pay your debts on time", "Invest all savings in high-risk speculative assets immediately"], 
+  answer: 3 
+},
+{ q: "According to the tips, what minimum percentage of income is recommended to save?", 
+  options: ["1%", "5%", "10%", "50%"], 
+  answer: 2 
+},
+{ q: "In the retirement savings computation steps, what is the standard retirement age used in the module?", 
+  options: ["55 years old", "60 years old", "65 years old", "70 years old"], 
+  answer: 1 
+},
+{ q: "Using the example in the PDF, how much total retirement savings results from saving Php100 daily for 40 years?", 
+  options: ["Php 144,000", "Php 1,440,000", "Php 14,400,000", "Php 144,000,000"], 
+  answer: 1 
+},
+{ q: "Which step is not part of the simple retirement savings computation given?", 
+  options: ["Compute number of years before age 60", "Commit how much you would like to save daily, weekly or monthly until you reach 60", "Multiply the amount with the number of years", "Assume a guaranteed 50% annual return"], 
+  answer: 3 
+},
+{ q: "In the application comparing three men, what is the main lesson illustrated by Mr. Invest Now, Mr. Catch Up, and Mr. Wait Longer?", 
+  options: ["Waiting longer always yields higher returns", "Investing at an early age yields much larger retirement balances due to compounding", "Monthly savings amount does not matter", "All three will end up with the same retirement amount"], 
+  answer: 1 
+},
+{ q: "In the Mr. Invest Now example (PhP 5,000 monthly, 10% annual return), which retirement amount is shown for the person who started at age 30?", 
+  options: ["PhP 800,000", "PhP 1,800,000", "PhP 5,500,000", "PhP 600,000"], 
+  answer: 2 
+},
+{ q: "Which of the following is listed as a benefit of savings in the module?", 
+  options: ["Immediate luxury purchases without planning", "Security, future uses like education, business, health and housing", "Guaranteed protection from inflation without investing", "Exemption from taxes"], 
+  answer: 1 
+},
+{ q: "Which cultural proverb is cited to show Filipino importance of savings?", 
+  options: ["A rolling stone gathers no moss", "Kapag may isinuksok, may madudukot", "Early to bed, early to rise", "A penny saved is a penny earned"], 
+  answer: 1 
+},
+{ q: "What is the recommended first action in the tips to grow savings?", 
+  options: ["Spend first, then save what is left", "Save first, then allocate the rest of your income to expenses", "Invest in risky assets before saving", "Borrow to increase savings"], 
+  answer: 1 
+},
+{ q: "Which savings product is specifically designed to benefit segments like kiddie savings, Overseas Filipino savings, and pensioner savings accounts?", 
+  options: ["Time deposits only", "Savings accounts for specific markets", "Microdeposits only", "Checking accounts only"], 
+  answer: 1 
+},
+{ q: "What is a compulsory/pledged savings in microfinance context as mentioned in the PDF?", 
+  options: ["Deposit accounts typically attached or bundled with loans of microfinance clients", "Voluntary savings with no relation to loans", "Government bonds for retirees", "A type of insurance policy"], 
+  answer: 0 
+},
+{ q: "Which of the following best summarizes the module’s synthesis and core lesson?", 
+  options: ["Savings are irrelevant to poverty eradication", "Small savings accumulate into future uses; save now, save regularly, save more", "Only the wealthy should save and invest", "Savings should always be kept at home for safety"], 
+  answer: 1 
+},
+
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
