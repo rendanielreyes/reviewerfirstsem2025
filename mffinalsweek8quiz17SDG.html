@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive SDG Quiz</title>
+  <style>
+    body {
+      font-family: Inter, Arial, sans-serif;
+      margin: 0;
+      background: #0d0f14;
+      color: #e6e6e6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 15px;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 750px;
+      background: #161a23;
+      border-radius: 18px;
+      padding: 30px 35px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.45);
+      margin-bottom: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #40c9ff;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .sdg-hint-btn {
+      display: block;
+      margin: 20px auto 25px;
+      padding: 10px 24px;
+      background: #40c9ff;
+      color: #0d0f14;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(64, 201, 255, 0.3);
+    }
+    .sdg-hint-btn:hover { background: #5dd5ff; }
+    #sdg-tooltip {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 520px;
+      max-height: 80vh;
+      background: #1e2533;
+      border: 2px solid #40c9ff;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      z-index: 1000;
+      overflow: hidden;
+    }
+    #sdg-tooltip.show { display: block; }
+    .tooltip-header {
+      background: #40c9ff;
+      color: #0d0f14;
+      padding: 14px 20px;
+      font-weight: 700;
+      font-size: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .close-tooltip {
+      background: none; border: none; color: #0d0f14;
+      font-size: 28px; font-weight: bold; cursor: pointer;
+    }
+    .tooltip-content {
+      padding: 20px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .sdg-list { list-style: none; padding: 0; margin: 0; counter-reset: sdg; }
+    .sdg-list li { counter-increment: sdg; padding: 6px 0; }
+    .sdg-list li::before {
+      content: counter(sdg) ".";
+      color: #40c9ff;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .question { font-size: 20px; font-weight: 600; margin-bottom: 18px; line-height: 1.4; }
+    .options button {
+      display: block; width: 100%; background: #222836; color: #e6e6e6;
+      border: none; border-radius: 12px; padding: 12px; margin: 8px 0;
+      text-align: left; font-size: 16px; cursor: pointer; transition: 0.25s;
+    }
+    .options button:hover { background: #2b3242; }
+    .feedback { margin-top: 12px; font-size: 18px; font-weight: 600; }
+    .correct { color: #4dff88; }
+    .wrong { color: #ff5d5d; }
+    .next-btn {
+      margin-top: 20px; width: 100%; background: #40c9ff; color: #0d0f14;
+      padding: 14px; border: none; border-radius: 12px; font-size: 17px;
+      font-weight: 700; cursor: pointer; display: none;
+    }
+    #footer-reset-bar button {
+      width: 100%; max-width: 750px; background: #272e3d; color: #d5d5d5;
+      padding: 12px; border: none; border-radius: 10px; font-size: 16px;
+      font-weight: 600; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SDG Quiz Reviewer</h1>
+    <button class="sdg-hint-btn" onclick="document.getElementById('sdg-tooltip').classList.toggle('show')">
+      17 SDGs
+    </button>
+    <div id="quiz">
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <button id="next-btn" class="next-btn">Next Question</button>
+    </div>
+    <div id="result" class="result" style="display:none;"></div>
+  </div>
+  <div id="footer-reset-bar">
+    <button onclick="confirmReset()">Reset Quiz</button>
+  </div>
+
+  <!-- Tooltip Placeholder -->
+  <div id="sdg-tooltip">
+    <div class="tooltip-header">
+      <span>17 Sustainable Development Goals</span>
+      <button class="close-tooltip" onclick="document.getElementById('sdg-tooltip').classList.remove('show')">X</button>
+    </div>
+    <div class="tooltip-content">
+      <ol class="sdg-list">
+        <li>No Poverty - End poverty in all its forms everywhere</li>
+<li>Zero Hunger - End hunger, achieve food security and improved nutrition and promote sustainable agriculture</li>
+<li>Good Health and Well-being - Ensure healthy lives and promote well-being for all at all ages</li>
+<li>Quality Education - Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all</li>
+<li>Gender Equality - Achieve gender equality and empower all women and girls</li>
+<li>Clean Water and Sanitation - Ensure availability and sustainable management of water and sanitation for all</li>
+<li>Affordable and Clean Energy - Ensure access to affordable, reliable, sustainable and modern energy for all</li>
+<li>Decent Work and Economic Growth - Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all</li>
+<li>Industry, Innovation and Infrastructure - Build resilient infrastructure, promote inclusive and sustainable industrialization and foster innovation</li>
+<li>Reduced Inequalities - Reduce inequality within and among countries</li>
+<li>Sustainable Cities and Communities - Make cities and human settlements inclusive, safe, resilient and sustainable</li>
+<li>Responsible Consumption and Production - Ensure sustainable consumption and production patterns</li>
+<li>Climate Action - Take urgent action to combat climate change and its impacts</li>
+<li>Life Below Water - Conserve and sustainably use the oceans, seas and marine resources for sustainable development</li>
+<li>Life on Land - Protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss</li>
+<li>Peace, Justice and Strong Institutions - Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels</li>
+<li>Partnerships for the Goals - Strengthen the means of implementation and revitalize the Global Partnership for Sustainable Development</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    // ---------- QUIZ DATA (placeholder) ----------
+    const quizData = [
+     {
+    q: "End poverty in all its forms everywhere.",
+    options: ["SDG 1", "SDG 3", "SDG 10", "SDG 17"],
+    answer: 0
+  },
+  {
+    q: "End hunger, achieve food security and improved nutrition and promote sustainable agriculture.",
+    options: ["SDG 8", "SDG 2", "SDG 12", "SDG 15"],
+    answer: 1
+  },
+  {
+    q: "Ensure healthy lives and promote well-being for all at all ages.",
+    options: ["SDG 7", "SDG 11", "SDG 3", "SDG 16"],
+    answer: 2
+  },
+  {
+    q: "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all.",
+    options: ["SDG 4", "SDG 6", "SDG 9", "SDG 13"],
+    answer: 0
+  },
+  {
+    q: "Achieve gender equality and empower all women and girls.",
+    options: ["SDG 12", "SDG 5", "SDG 14", "SDG 1"],
+    answer: 1
+  },
+  {
+    q: "Ensure availability and sustainable management of water and sanitation for all.",
+    options: ["SDG 6", "SDG 2", "SDG 11", "SDG 15"],
+    answer: 0
+  },
+  {
+    q: "Ensure access to affordable, reliable, sustainable and modern energy for all.",
+    options: ["SDG 13", "SDG 7", "SDG 4", "SDG 16"],
+    answer: 1
+  },
+  {
+    q: "Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all.",
+    options: ["SDG 8", "SDG 10", "SDG 5", "SDG 14"],
+    answer: 0
+  },
+  {
+    q: "Build resilient infrastructure, promote inclusive and sustainable industrialization and foster innovation.",
+    options: ["SDG 17", "SDG 9", "SDG 3", "SDG 12"],
+    answer: 1
+  },
+  {
+    q: "Reduce inequality within and among countries.",
+    options: ["SDG 6", "SDG 15", "SDG 10", "SDG 2"],
+    answer: 2
+  },
+  {
+    q: "Make cities and human settlements inclusive, safe, resilient and sustainable.",
+    options: ["SDG 11", "SDG 7", "SDG 13", "SDG 4"],
+    answer: 0
+  },
+  {
+    q: "Ensure sustainable consumption and production patterns.",
+    options: ["SDG 16", "SDG 12", "SDG 8", "SDG 5"],
+    answer: 1
+  },
+  {
+    q: "Take urgent action to combat climate change and its impacts.",
+    options: ["SDG 9", "SDG 14", "SDG 13", "SDG 1"],
+    answer: 2
+  },
+  {
+    q: "Conserve and sustainably use the oceans, seas and marine resources for sustainable development.",
+    options: ["SDG 15", "SDG 3", "SDG 17", "SDG 14"],
+    answer: 3
+  },
+  {
+    q: "Protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss.",
+    options: ["SDG 11", "SDG 15", "SDG 6", "SDG 10"],
+    answer: 1
+  },
+  {
+    q: "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels.",
+    options: ["SDG 16", "SDG 4", "SDG 12", "SDG 8"],
+    answer: 0
+  },
+  {
+    q: "Strengthen the means of implementation and revitalize the Global Partnership for Sustainable Development.",
+    options: ["SDG 2", "SDG 9", "SDG 17", "SDG 13"],
+    answer: 2
+  }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const nextBtn = document.getElementById("next-btn");
+    const resultEl = document.getElementById("result");
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function confirmReset() {
+      if (confirm("Reset quiz and shuffle everything again?")) {
+        shuffleArray(quizData);
+        currentQuestion = 0;
+        score = 0;
+        hasAnsweredCorrectly.fill(false);
+        document.getElementById("quiz").style.display = "block";
+        resultEl.style.display = "none";
+        showQuestion();
+      }
+    }
+
+    function showQuestion() {
+      const item = quizData[currentQuestion];
+      questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+      optionsEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      nextBtn.style.display = "none";
+
+      const optionsWithIndex = item.options.map((opt, idx) => ({ opt, idx }));
+      shuffleArray(optionsWithIndex);
+
+      optionsWithIndex.forEach(({ opt, idx }) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => tryAnswer(idx);
+        optionsEl.appendChild(btn);
+        if (hasAnsweredCorrectly[currentQuestion]) {
+          btn.disabled = true;
+        }
+      });
+
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        feedbackEl.textContent = "Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+        nextBtn.style.display = "block";
+      }
+    }
+
+    function tryAnswer(selectedIndex) {
+      const correctIdx = quizData[currentQuestion].answer;
+      if (selectedIndex === correctIdx) {
+        feedbackEl.textContent = "Correct!";
+        feedbackEl.className = "feedback correct";
+        if (!hasAnsweredCorrectly[currentQuestion]) {
+          score++;
+          hasAnsweredCorrectly[currentQuestion] = true;
+        }
+        optionsEl.querySelectorAll("button").forEach(b => b.disabled = true);
+        nextBtn.style.display = "block";
+      } else {
+        // wrong answer - just disable the clicked button
+        event.target.disabled = true;
+        event.target.style.opacity = "0.5";
+        feedbackEl.textContent = "Wrong! Try again.";
+        feedbackEl.className = "feedback wrong";
+      }
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    };
+
+    function showResult() {
+      document.getElementById("quiz").style.display = "none";
+      resultEl.style.display = "block";
+      resultEl.innerHTML = `<h2>Your Score: ${score}/${quizData.length}</h2>`;
+    }
+
+    // Initial shuffle & start
+    shuffleArray(quizData);
+    showQuestion();
+  </script>
+</body>
+</html>
