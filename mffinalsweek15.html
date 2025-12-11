@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MF Week 15 topic (40)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>MF Week 15 topic Reviewer (40)</h1>
+
+  <div class="jump-box">
+    <input id="jumpInput" type="number" min="1" placeholder="Jump to #">
+    <button onclick="jumpToQuestion()">Go</button>
+  </div>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+
+
+{
+  q: "According to RA 10607 Section 2(a), what is the definition of insurance?",
+  options: [
+    "A savings plan for retirement",
+    "An agreement to indemnify another against loss, damage, or liability from a contingent event",
+    "A government subsidy for health care",
+    "A loan contract for small businesses"
+  ],
+  answer: 1
+},
+
+{
+  q: "Which of the following is a general product of insurance that covers human lives?",
+  options: ["Life Insurance", "Non-Life Insurance", "Property Insurance", "Casualty Insurance"],
+  answer: 0
+},
+
+{
+  q: "Which of the following is a general product of insurance that does NOT cover human lives?",
+  options: ["Life Insurance", "Non-Life Insurance", "Health Insurance", "Credit Life Insurance"],
+  answer: 1
+},
+
+{
+  q: "Under RA 10607 Section 187, microinsurance premiums must not exceed what percentage of the current daily minimum wage?",
+  options: ["5%", "7.5%", "10%", "15%"],
+  answer: 1
+},
+
+{
+  q: "The maximum sum of guaranteed benefits in microinsurance must not exceed how many times the current daily minimum wage?",
+  options: ["500 times", "750 times", "1000 times", "1500 times"],
+  answer: 2
+},
+
+{
+  q: "Which of the following is an example of Micro-Life Insurance?",
+  options: ["Casualty insurance", "Credit life insurance", "Property insurance", "Liability insurance"],
+  answer: 1
+},
+
+{
+  q: "Which of the following is an example of Micro-Non-Life Insurance?",
+  options: ["Term insurance", "Personal accident insurance", "Casualty and liability insurance", "Credit life insurance"],
+  answer: 2
+},
+
+{
+  q: "Which institution is known for the slogan 'We Are In The Business of Poverty Eradication'?",
+  options: ["CARD MRI", "PhilHealth", "CLIMBS", "Cebuana Lhuillier"],
+  answer: 0
+},
+
+{
+  q: "Which microinsurance provider uses the tagline 'Panatag Ka'?",
+  options: ["CARD MBA", "BIMA", "Cebuana Lhuillier", "CLIMBS"],
+  answer: 0
+},
+
+{
+  q: "Which microinsurance provider is a cooperative insurer established in 1971?",
+  options: ["Cocolife", "CLIMBS", "CARD Pioneer", "BIMA"],
+  answer: 1
+},
+
+{
+  q: "Which of the following is NOT listed as a microinsurance provider in the PDF?",
+  options: ["CARD MBA", "BIMA", "Cebuana Lhuillier", "PhilHealth"],
+  answer: 3
+},
+
+{
+  q: "Which benefit of microinsurance ensures affordability for low-income households?",
+  options: ["Affordability", "Risk protection", "Coverage options", "Minimal requirements"],
+  answer: 0
+},
+
+{
+  q: "Which benefit of microinsurance emphasizes protection against uncertainties?",
+  options: ["Affordability", "Risk protection", "Coverage options", "Shorter claim period"],
+  answer: 1
+},
+
+{
+  q: "Which benefit of microinsurance allows clients to choose between life and non-life coverage?",
+  options: ["Affordability", "Coverage options", "Minimal requirements", "Shorter claim period"],
+  answer: 1
+},
+
+{
+  q: "Which benefit of microinsurance highlights simple documentation requirements?",
+  options: ["Affordability", "Minimal requirements", "Coverage options", "Risk protection"],
+  answer: 1
+},
+
+{
+  q: "Which benefit of microinsurance ensures claims are processed quickly, usually within 10 working days?",
+  options: ["Affordability", "Minimal requirements", "Coverage options", "Shorter claim period"],
+  answer: 3
+},
+
+{
+  q: "Which of the following is an example of Micro-Life Insurance product?",
+  options: ["Term insurance", "Casualty insurance", "Property insurance", "Fire insurance"],
+  answer: 0
+},
+
+{
+  q: "Which of the following is an example of Micro-Non-Life Insurance product?",
+  options: ["Personal accident insurance", "Credit life insurance", "Casualty insurance", "Term insurance"],
+  answer: 2
+},
+
+{
+  q: "Which microinsurance provider is associated with CARD MRI and offers pioneer products?",
+  options: ["CARD MBA", "CARD Pioneer", "Cebuana Lhuillier", "Cocolife"],
+  answer: 1
+},
+
+{
+  q: "Which microinsurance provider is a well-known financial services company in the Philippines?",
+  options: ["Cebuana Lhuillier", "CLIMBS", "CARD MBA", "BIMA"],
+  answer: 0
+},
+
+
+{
+  q: "Which Republic Act governs insurance and microinsurance in the Philippines?",
+  options: ["RA 10607", "RA 10963", "RA 8799", "RA 9165"],
+  answer: 0
+},
+
+{
+  q: "Section 187 of RA 10607 specifically defines which financial product?",
+  options: ["Life Insurance", "Non-Life Insurance", "Microinsurance", "Health Insurance"],
+  answer: 2
+},
+
+{
+  q: "Microinsurance premiums are computed based on what time unit?",
+  options: ["Weekly basis", "Monthly basis", "Daily basis", "Annual basis"],
+  answer: 2
+},
+
+{
+  q: "The maximum sum of guaranteed benefits in microinsurance is tied to what benchmark?",
+  options: [
+    "Average household income",
+    "Current daily minimum wage in Metro Manila",
+    "Annual GDP growth rate",
+    "Inflation rate"
+  ],
+  answer: 1
+},
+
+{
+  q: "Which of the following is a key feature of microinsurance products under Philippine law?",
+  options: [
+    "Premiums must be paid annually",
+    "Premiums must not exceed 7.5% of daily minimum wage",
+    "Benefits must be unlimited",
+    "Only property insurance is allowed"
+  ],
+  answer: 1
+},
+
+{
+  q: "Which microinsurance provider is known internationally for mobile-based insurance services?",
+  options: ["CARD MBA", "BIMA", "CLIMBS", "Cocolife"],
+  answer: 1
+},
+
+{
+  q: "Which microinsurance provider is part of a pawnshop chain offering financial services?",
+  options: ["Cebuana Lhuillier", "CARD Pioneer", "CLIMBS", "BIMA"],
+  answer: 0
+},
+
+{
+  q: "Which microinsurance provider is associated with CARD MRI and focuses on pioneering products?",
+  options: ["CARD MBA", "CARD Pioneer", "Cocolife", "CLIMBS"],
+  answer: 1
+},
+
+{
+  q: "Which microinsurance provider is a commercial life insurance company in the Philippines?",
+  options: ["Cocolife", "CLIMBS", "CARD MBA", "BIMA"],
+  answer: 0
+},
+
+{
+  q: "Which benefit of microinsurance is highlighted by the phrase 'typically after 10 working days'?",
+  options: ["Affordability", "Minimal requirements", "Shorter claim period", "Coverage options"],
+  answer: 2
+},
+
+{
+  q: "Which benefit of microinsurance makes it easy for low-income households to understand and access?",
+  options: ["Minimal requirements", "Coverage options", "Risk protection", "Affordability"],
+  answer: 0
+},
+
+{
+  q: "Which benefit of microinsurance emphasizes that households can protect themselves against uncertainties?",
+  options: ["Coverage options", "Risk protection", "Affordability", "Minimal requirements"],
+  answer: 1
+},
+
+{
+  q: "Which benefit of microinsurance allows households to select between life and non-life coverage?",
+  options: ["Coverage options", "Risk protection", "Affordability", "Minimal requirements"],
+  answer: 0
+},
+
+{
+  q: "Which slogan is repeatedly emphasized in the PDF as the mission of CARD MRI?",
+  options: [
+    "Panatag Ka",
+    "We Are In The Business of Poverty Eradication",
+    "More than just Protection",
+    "Trusted Since 1971"
+  ],
+  answer: 1
+},
+
+{
+  q: "Which microinsurance provider uses the tagline 'more than just Protection'?",
+  options: ["CLIMBS", "CARD MBA", "Cebuana Lhuillier", "Cocolife"],
+  answer: 0
+},
+
+{
+  q: "Which microinsurance provider is explicitly branded as CARD Pioneer Microinsurance Inc.?",
+  options: ["CARD MBA", "CARD Pioneer", "Cebuana Lhuillier", "BIMA"],
+  answer: 1
+},
+
+{
+  q: "Which microinsurance provider is highlighted with the phrase 'Panatag Ka' in the PDF?",
+  options: ["CARD MBA", "BIMA", "Cebuana Lhuillier", "CLIMBS"],
+  answer: 0
+},
+
+{
+  q: "Which microinsurance provider is linked to cooperative insurance and has been active since 1971?",
+  options: ["CLIMBS", "Cocolife", "CARD MBA", "BIMA"],
+  answer: 0
+},
+
+{
+  q: "Which microinsurance provider is part of CARD MRI’s group of institutions?",
+  options: ["CARD MBA", "PhilHealth", "CLIMBS", "Cebuana Lhuillier"],
+  answer: 0
+},
+
+{
+  q: "Which microinsurance provider is explicitly mentioned alongside CARD MRI in the PDF?",
+  options: ["CARD MBA", "BIMA", "Cebuana Lhuillier", "Cocolife"],
+  answer: 0
+}
+
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+  
+  // *** NEW FUNCTION: Handles the confirmation dialog and reset ***
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    
+    if (isConfirmed) {
+      location.reload(); // Hard reset (Yes clicked)
+    } 
+    // If 'Cancel' or 'No' is clicked, nothing happens.
+  }
+  // -------------------------------------------------------------
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    item.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, index);
+      optionsEl.appendChild(btn);
+      
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+    
+    if (hasAnsweredCorrectly[currentQuestion]) {
+        nextBtn.style.display = "block";
+        feedbackEl.textContent = "✅ Correct! (Revisiting)";
+        feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+
+    resultEl.innerHTML = `
+      <h2>Your Score: ${score}/${quizData.length}</h2>
+    `;
+  }
+
+  showQuestion();
+</script>
+</body>
+</html>
