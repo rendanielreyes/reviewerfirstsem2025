@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MF Acronyms (11)</title>
+<style>
+  body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #0d0f14;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 40px 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 750px;
+    background: #161a23;
+    border-radius: 18px;
+    padding: 30px 35px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    margin-bottom: 20px; 
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #40c9ff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .jump-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .jump-box input {
+    padding: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: none;
+    background: #222836;
+    color: #fff;
+    text-align: center;
+  }
+  .jump-box button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #40c9ff;
+    color: #0d0f14;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    background: #222836;
+    color: #e6e6e6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .options button:hover {
+    background: #2b3242;
+  }
+  .feedback {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .correct {
+    color: #4dff88;
+  }
+  .wrong {
+    color: #ff5d5d;
+  }
+  .next-btn {
+    margin-top: 20px;
+    width: 100%;
+    background: #40c9ff;
+    color: #0d0f14;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .result {
+    text-align: center;
+  }
+  /* --- FOOTER STYLES --- */
+  #footer-reset-bar {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    padding: 15px 0;
+  }
+  #footer-reset-bar button {
+    width: 100%;
+    background: #272e3d;
+    color: #d5d5d5;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Acronyms (11)</h1>
+
+  
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next-btn" class="next-btn">Next Question</button>
+  </div>
+
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<div id="footer-reset-bar">
+  <button onclick="confirmReset()">🔄 Reset Quiz</button>
+</div>
+<script>
+  const quizData = [
+    
+  {
+    q: "A Philippine institution dedicated to poverty eradication through microfinance and community development, often described as a world-class leader in the field.",
+    options: ["PDIC", "MFI", "CARD MRI", "CGAP"],
+    answer: 2
+  },
+  {
+    q: "The practice of aligning an organization's operations, systems, and products with its social mission, emphasizing both outcomes and the processes behind them.",
+    options: ["CPCP", "SPM", "PPI", "SARAP"],
+    answer: 1
+  },
+  {
+    q: "A simple 10-question tool used by microfinance institutions to assess whether a client's household is likely living below the poverty line.",
+    options: ["SARAP", "BLU", "PPI", "SPM"],
+    answer: 2
+  },
+  {
+    q: "The state corporation responsible for insuring bank deposits in the Philippines, providing protection up to ₱1,000,000 per depositor.",
+    options: ["MBA", "PDIC", "CARD MRI", "NGO"],
+    answer: 1
+  },
+  {
+    q: "A global organization that promotes best practices in microfinance, including building permanent institutions and ensuring transparency.",
+    options: ["CGAP", "MFI", "PDIC", "CARD MRI"],
+    answer: 0
+  },
+  {
+    q: "A scaled-down banking facility designed to bring basic financial services to areas where establishing a full branch is not practical.",
+    options: ["MBA", "BLU", "CPCP", "SARAP"],
+    answer: 1
+  },
+  {
+    q: "The microinsurance provider under the CARD MRI group that offers affordable insurance products tailored for low-income households.",
+    options: ["SPM", "NGO", "MBA", "PPI"],
+    answer: 2
+  },
+  {
+    q: "The five criteria evaluated during member center meetings: Savings, Attendance, Repayment, Attitude, and Project.",
+    options: ["CPCP", "SARAP", "PPI", "SPM"],
+    answer: 1
+  },
+  {
+    q: "An internal program that ensures staff, management, and the board consistently follow consumer protection laws and standards.",
+    options: ["BLU", "CPCP", "MFI", "NGO"],
+    answer: 1
+  },
+  {
+    q: "A broad category of organizations—including NGOs, cooperatives, and banks—that deliver financial services specifically to low-income clients.",
+    options: ["CARD MRI", "CGAP", "PDIC", "MFI"],
+    answer: 3
+  }
+
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-btn");
+  const resultEl = document.getElementById("result");
+
+  // --- Shuffle helper ---
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  // --- Reset with shuffle ---
+  function confirmReset() {
+    const isConfirmed = confirm("Are you sure you want to reset the quiz? Your current progress will be lost.");
+    if (isConfirmed) {
+      shuffleArray(quizData); // shuffle questions
+      currentQuestion = 0;
+      score = 0;
+      hasAnsweredCorrectly = new Array(quizData.length).fill(false);
+
+      document.getElementById("quiz").style.display = "block";
+      resultEl.style.display = "none";
+      showQuestion();
+    }
+  }
+
+  function showQuestion() {
+    const item = quizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}. ${item.q}`;
+    optionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    nextBtn.style.display = "none";
+
+    // --- Shuffle options each time question is shown ---
+    const optionIndexes = item.options.map((opt, idx) => ({opt, idx}));
+    shuffleArray(optionIndexes);
+
+    optionIndexes.forEach(({opt, idx}) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => tryAnswer(btn, idx);
+      optionsEl.appendChild(btn);
+
+      if (hasAnsweredCorrectly[currentQuestion]) {
+        btn.disabled = true;
+      }
+    });
+
+    if (hasAnsweredCorrectly[currentQuestion]) {
+      nextBtn.style.display = "block";
+      feedbackEl.textContent = "✅ Correct! (Revisiting)";
+      feedbackEl.className = "feedback correct";
+    }
+  }
+
+  function tryAnswer(btn, selected) {
+    const correct = quizData[currentQuestion].answer;
+
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.className = "feedback correct";
+
+      if (!hasAnsweredCorrectly[currentQuestion]) {
+        score++;
+        hasAnsweredCorrectly[currentQuestion] = true;
+      }
+
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.45";
+      feedbackEl.textContent = "❌ Wrong! Try again.";
+      feedbackEl.className = "feedback wrong";
+    }
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  };
+
+  function jumpToQuestion() {
+    const num = parseInt(document.getElementById("jumpInput").value);
+    if (!num || num < 1 || num > quizData.length) {
+      alert("Invalid question number.");
+      return;
+    }
+    currentQuestion = num - 1;
+    showQuestion();
+  }
+
+  function showResult() {
+    document.getElementById("quiz").style.display = "none";
+    resultEl.style.display = "block";
+    resultEl.innerHTML = `<h2>Your Score: ${score}/${quizData.length}</h2>`;
+  }
+
+  // Initial shuffle on first load
+  shuffleArray(quizData);
+  showQuestion();
+</script>
+
+</body>
+</html>
